@@ -65,12 +65,19 @@ class FileSystemImpl extends FileSystemPOA {
 
   }
   
-  public FileInstance openFileForRead(String title) {
-    listOfFiles.forEach(n -> {
-      if(n.getTitle().equals(title)) {
-        return;
+
+  /**
+   * Returnd null if the file is not on this server
+   * @param title
+   * @param lineNum
+   * @return A string that is the specified line of the specified file returns null if the file is not here
+   */
+  public String openFileLineNumber(String title, int lineNum) {
+    for(int i = 0; i < listOfFiles.size(); i++) {
+      if (listOfFiles.get(i).getTitle().equals(title)) {
+        return listOfFiles.get(i).readLine(lineNum);
       }
-    });
+    }
     return null;
   }
 
