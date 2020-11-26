@@ -14,7 +14,7 @@ public class AnotherMenuState extends State
 	AnotherMenuState()
 	{
 		MenuOption[] myMenuOptions =
-			{ new MenuOptionForAction("Do another Action", new AnotherConcreteAction()),
+			{ new MenuOptionForAction("Do another Action", new TestServersAction()),
 					new MenuOptionForMenu("Exit", MenuStateEnum.END_STATE) };
 		
 		super.loadMenu(myMenuOptions);

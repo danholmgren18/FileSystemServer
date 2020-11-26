@@ -1,3 +1,6 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 
 /**
  * This is the state that the machine starts in.  In other words, it is the highest level menu
@@ -10,7 +13,7 @@ public class StartState extends State
 	static final MenuOption[] x =
 		{ new MenuOptionForMenu("First Option to another menu", MenuStateEnum.ANOTHER_MENU),
 				new MenuOptionForMenu("Second Option to Second Menu",MenuStateEnum.SECOND_MENU),
-				new MenuOptionForAction("This one does something", new ConcreteMenuAction()),
+				new MenuOptionForAction("This one tests the servers", new TestServersAction()),
 				new MenuOptionForMenu("Exit", MenuStateEnum.END_STATE) };
 
 	/**
@@ -18,7 +21,24 @@ public class StartState extends State
 	 */
 	StartState()
 	{
+	  Process p;
+    try {
+      p = Runtime.getRuntime().exec("orbd -ORBInitialHost localhost -ORBInitialPort 1056 -port 1057&");
+      PrintStream out = new PrintStream(p.getOutputStream());
+      BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
+      out.println("ls");
+      while (in.ready()) {
+        String s = in.readLine();
+        System.out.println(s);
+      }
+      out.println("exit");
+
+      p.waitFor();
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 		super.loadMenu(x);
 	}
 
