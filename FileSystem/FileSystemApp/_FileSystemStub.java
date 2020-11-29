@@ -134,4 +134,28 @@ public class _FileSystemStub extends org.omg.CORBA.portable.ObjectImpl implement
 		}
 	}
 
+  @Override
+  public String openFileLineNumber(String title, int lineNum) {
+    org.omg.CORBA.portable.InputStream $in = null;
+    try
+    {
+      org.omg.CORBA.portable.OutputStream $out = _request("openFileLineNumber", true);
+      $out.write_string(title);
+      $in = _invoke($out);
+      String $result = $in.read_string();
+      return $result;
+    } catch (org.omg.CORBA.portable.ApplicationException $ex)
+    {
+      $in = $ex.getInputStream();
+      String _id = $ex.getId();
+      throw new org.omg.CORBA.MARSHAL(_id);
+    } catch (org.omg.CORBA.portable.RemarshalException $rm)
+    {
+      return openFileLineNumber(title, lineNum);
+    } finally
+    {
+      _releaseReply($in);
+    }
+  }
+
 } 

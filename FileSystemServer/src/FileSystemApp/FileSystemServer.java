@@ -21,7 +21,7 @@ class FileSystemImpl extends FileSystemPOA {
   public FileSystemImpl() {
     Path currentRelativePath = Paths.get("");
     String s = currentRelativePath.toAbsolutePath().toString();
-    File f = new File(s + "/Files");
+    File f = new File(s + "/../Files");
     String[] files = f.list();
     // Populates the array with names of files and directories
     for(int i = 0; i < files.length; i++) {
