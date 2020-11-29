@@ -35,10 +35,12 @@ public class FileSystemClient
 
 			System.out.println("Obtained a handle on server object: " + fileSystemImpl);
 			System.out.println(fileSystemImpl.sayHello());
-			System.out.println("finished hello starting to read file");
-			System.out.println(fileSystemImpl.readFile("test2.txt"));
+//			System.out.println("finished hello starting to read file");
+//			System.out.println(fileSystemImpl.readFile("test2.txt"));
+			System.out.println("finished read file starting to read line in file");
+      System.out.println("Line 2 of Penguin: " + fileSystemImpl.openFileLineNumber("Penguin.txt", (short) 2));
 			// This is how we would shut down the server
-			//fileSystemImpl.shutdown();
+			// fileSystemImpl.shutdown();
 
 		} catch (Exception e)
 		{

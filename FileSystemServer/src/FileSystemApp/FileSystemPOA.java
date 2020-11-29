@@ -18,7 +18,7 @@ public abstract class FileSystemPOA extends org.omg.PortableServer.Servant
 		_methods.put("sayHello", new java.lang.Integer(0));
 		_methods.put("shutdown", new java.lang.Integer(1));
 		_methods.put("readFile", new java.lang.Integer(2));
-		_methods.put("openFileLineNumber", new java.lang.Integer(2));
+		_methods.put("openFileLineNumber", new java.lang.Integer(3));
 	}
 
 	/**
@@ -60,12 +60,16 @@ public abstract class FileSystemPOA extends org.omg.PortableServer.Servant
 			out.write_string($result);
 			break;
 		}
-		/*
-		 * Idk something else had gotta go here
-		 */
+		
 		case 3:
 		{
 		  String fileTitle = in.read_string();
+		  short lineNum = in.read_short();
+		  String $result = null;
+		  $result = this.openFileLineNumber(fileTitle, lineNum);
+		  out = $rh.createReply();
+		  out.write_string($result);
+		  break;
 		}
 		default:
 			throw new org.omg.CORBA.BAD_OPERATION(0, org.omg.CORBA.CompletionStatus.COMPLETED_MAYBE);

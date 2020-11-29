@@ -1,13 +1,7 @@
-/byteSeqHelper.class
-/byteSeqHolder.class
-/FileServerImpl.class
-/FileServerServer.class
-/_FileSystemStub.class
 /FileSystem.class
-/FileSystemClient.class
 /FileSystemHelper.class
 /FileSystemHolder.class
 /FileSystemOperations.class
-/FileSystemPOA.class
-/FileSystemServer.class
-/FileSystemImpl.class
+/_FileSystemStub.class
+/byteSeqHelper.class
+/byteSeqHolder.class
