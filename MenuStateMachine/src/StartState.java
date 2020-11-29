@@ -11,9 +11,9 @@ public class StartState extends State
 {
 
 	static final MenuOption[] x =
-		{ new MenuOptionForMenu("First Option to another menu", MenuStateEnum.ANOTHER_MENU),
-				new MenuOptionForMenu("Second Option to Second Menu",MenuStateEnum.SECOND_MENU),
-				new MenuOptionForAction("This one tests the servers", new TestServersAction()),
+		{ new MenuOptionForMenu("Read a File", MenuStateEnum.READ_MENU),
+				new MenuOptionForMenu("Write to a File", MenuStateEnum.WRITE_MENU),
+				new MenuOptionForAction("Test the Servers", new TestServersAction()),
 				new MenuOptionForMenu("Exit", MenuStateEnum.END_STATE) };
 
 	/**

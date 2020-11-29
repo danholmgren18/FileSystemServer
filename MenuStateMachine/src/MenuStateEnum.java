@@ -2,8 +2,9 @@
 public enum MenuStateEnum
 {
 	START_MENU(new StartState()),
-	SECOND_MENU(new SecondMenuState()),
-	ANOTHER_MENU(new AnotherMenuState()),
+	WRITE_MENU(new WriteState()),
+	READ_MENU(new ReadState()),
+	TEST_SERVER_MENU(new TestServerState()),
 	END_STATE(new EndState());
 	
 	private State state;
