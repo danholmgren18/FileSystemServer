@@ -3,10 +3,12 @@ import java.util.Scanner;
 /**
  * This is a stupid action just to show how things work
  * 
+ * This now is the action that is used to read a line from a file
+ * 
  * @author merlin
  *
  */
-public class AnotherConcreteAction extends MenuAction
+public class ReadAction extends MenuAction
 {
 
 	/**

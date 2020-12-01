@@ -6,7 +6,7 @@ import java.util.Scanner;
  * @author merlin
  *
  */
-public class ConcreteMenuAction extends MenuAction
+public class WriteAction extends MenuAction
 {
 
 	/**

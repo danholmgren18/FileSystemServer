@@ -5,16 +5,17 @@
  * @author merlin
  *
  */
-public class SecondMenuState extends State
+public class WriteState extends State
 {
 	 private MenuOption[] myMenuOptions =
-		{ new MenuOptionForMenu("Go Back", StartState.class), 
+		{   new MenuOptionForAction("Write to a File", new WriteAction(), WriteState.class),
+		    new MenuOptionForMenu("Return to Main Menu", StartState.class), 
 				new MenuOptionForMenu("Exit", EndState.class) };
 
 	/**
 	 * 
 	 */
-	public SecondMenuState()
+	public WriteState()
 	{
 		super.loadMenu(myMenuOptions);
 	}

@@ -8,9 +8,9 @@ public class StartState extends State
 {
 
 	private static final MenuOption[] x =
-		{ new MenuOptionForMenu("Open file for read", AnotherMenuState.class),
-				new MenuOptionForMenu("Open file for write",SecondMenuState.class),
-				new MenuOptionForAction("This one does something", new ConcreteMenuAction(),StartState.class),
+		{ new MenuOptionForMenu("Open file for read", ReadState.class),
+				new MenuOptionForMenu("Open file for write", WriteState.class),
+				new MenuOptionForAction("This one does something", new WriteAction(), StartState.class),
 				new MenuOptionForMenu("Exit", EndState.class) };
 
 	/**
