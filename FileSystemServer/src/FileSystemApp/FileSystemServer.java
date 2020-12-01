@@ -78,6 +78,18 @@ class FileSystemImpl extends FileSystemPOA
     return null;
   }
 
+  @Override
+  public String openFileForWrite(String title, short linenum) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public String updateFileAfterWrite(String newLine, String title, short lineNum) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 }
 
 
