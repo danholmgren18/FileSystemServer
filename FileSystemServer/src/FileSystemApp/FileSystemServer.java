@@ -2,9 +2,13 @@ package FileSystemApp;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import org.omg.CORBA.ORB;
@@ -79,15 +83,48 @@ class FileSystemImpl extends FileSystemPOA
   }
 
   @Override
-  public String openFileForWrite(String title, short linenum) {
-    // TODO Auto-generated method stub
+  public String openFileForWrite(String title, short lineNum) {
+    /*
+     * This is where we check to see if locked and then lock if not
+     * 
+     * Call the methods for every server to lock
+     */
+    Path currentRelativePath = Paths.get("");
+    String s = currentRelativePath.toAbsolutePath().toString() + "/..";
+    File f = new File(s + "/Files");
+    String[] files = f.list();
+  
+ //Populates the array with names of files and directories
+    for(int i = 0; i < files.length; i++) {
+      listOfFiles.add(new FileInstance(new File(s + "/Files/" + files[i])));
+    }
+
+    for(int i = 0; i < listOfFiles.size(); i++) {
+      if (listOfFiles.get(i).getTitle().equals(title)) {
+        return listOfFiles.get(i).readLine((int)lineNum);
+      }
+    }
     return null;
   }
 
   @Override
   public String updateFileAfterWrite(String newLine, String title, short lineNum) {
-    // TODO Auto-generated method stub
-    return null;
+    Path currentRelativePath = Paths.get("");
+    String s = currentRelativePath.toAbsolutePath().toString() + "/..";
+    File f = new File(s + "/Files/" + title);
+  
+    try {
+      List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
+      lines.set(lineNum, newLine);
+      Files.write(f.toPath(), lines, StandardCharsets.UTF_8);    
+    } catch (IOException e) {
+      return "Did not Update";
+    }
+    
+    /*
+     * Unlock the file on all servers and update version number
+     */
+    return "Updated Successfully";
   }
 
 }

@@ -39,6 +39,11 @@ public class FileSystemClient
 //			System.out.println(fileSystemImpl.readFile("test2.txt"));
 			System.out.println("finished read file starting to read line in file");
       System.out.println("Line 2 of Penguin: " + fileSystemImpl.openFileLineNumber("Penguin.txt", (short) 2));
+      
+      System.out.println("Going to try and write a file");
+      System.out.println("Line 3 of Penguin.txt: " + fileSystemImpl.openFileLineNumber("Penguin.txt", (short) 3));
+      System.out.println("Going to change Line 3 to [Penguins dont have monarchies]: " + fileSystemImpl.updateFileAfterWrite("Penguins dont have monarchies", "Penguin.txt", (short)3));
+      System.out.println("Line 3 is now: " + fileSystemImpl.openFileLineNumber("Penguin.txt", (short) 2) );
 			// This is how we would shut down the server
 			// fileSystemImpl.shutdown();
 
