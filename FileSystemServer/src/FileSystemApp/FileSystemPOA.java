@@ -19,6 +19,8 @@ public abstract class FileSystemPOA extends org.omg.PortableServer.Servant
 		_methods.put("shutdown", new java.lang.Integer(1));
 		_methods.put("readFile", new java.lang.Integer(2));
 		_methods.put("openFileLineNumber", new java.lang.Integer(3));
+		_methods.put("openFileForWrite", new java.lang.Integer(4));
+		_methods.put("updateFileAfterWrite", new java.lang.Integer(5));
 	}
 
 	/**
@@ -69,6 +71,29 @@ public abstract class FileSystemPOA extends org.omg.PortableServer.Servant
 		  $result = this.openFileLineNumber(fileTitle, lineNum);
 		  out = $rh.createReply();
 		  out.write_string($result);
+		  break;
+		}
+		
+		case 4:
+		{
+      String fileTitle = in.read_string();
+      short lineNum = in.read_short();
+      String $result = null;
+      $result = this.openFileForWrite(fileTitle, lineNum);
+      out = $rh.createReply();
+      out.write_string($result);
+		  break;
+		}
+		
+		case 5:
+		{
+		  String newLine = in.read_string();
+      String fileTitle = in.read_string();
+      short lineNum = in.read_short();
+      String $result = null;
+      $result = this.updateFileAfterWrite(newLine, fileTitle, lineNum);
+      out = $rh.createReply();
+      out.write_string($result);
 		  break;
 		}
 		default:
