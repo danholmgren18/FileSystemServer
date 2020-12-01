@@ -6,40 +6,39 @@ import java.util.Scanner;
 
 public class FileInstance {
 
-    private File TheFile;
+    private String fileTitle;
     private int version = 0;
-    private int amntOfPeopleReading = 0;
+    private boolean isLocked = false;
     
-    public FileInstance(File file) {
-      TheFile = file;
+    public boolean isLocked() {
+      return isLocked;
     }
-    
+    public void setLocked(boolean isLocked) {
+      this.isLocked = isLocked;
+    }
+    public FileInstance(String title) {
+      fileTitle = title;
+    }
+    public void updateVersion() {
+      version++;
+    }
     public int getVersion() {
       return version;
     }
-    public File getFile() {
-      return TheFile;
-    }
     public String getTitle() {
-      return TheFile.getName();
+      return fileTitle;
     }
     
-    public void closeRead() {
-   
-      amntOfPeopleReading--;
-    }
-    
-    public String readLine(int lineNumber) {
+    public static String readLine(File file, int lineNumber) {
       Scanner sc;
       try {
-        sc = new Scanner(TheFile);
+        sc = new Scanner(file);
         int currLineNum = 0;
         while(sc.hasNextLine() && currLineNum < lineNumber) {
           String line = sc.nextLine();
           currLineNum++;
         }
         sc.close();
-        amntOfPeopleReading++;
         return sc.nextLine();
       } catch (FileNotFoundException e) {
         e.printStackTrace();
