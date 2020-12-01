@@ -1,6 +1,7 @@
 
 /**
- * This class models a single state in the menuing state machine
+ * This class models a single state in the menuing state machine.  NOTE:  every subclass of this state MUST have a
+ * public no arg constructor!!!!!
  * 
  * @author merlin
  *
@@ -45,11 +46,12 @@ public abstract class State
 		MenuOption chosenOption = menuOptions[option];
 		if (chosenOption instanceof MenuOptionForMenu)
 		{
-			return ((MenuOptionForMenu) chosenOption).getNextMenuState().getState();
+			return ((MenuOption) chosenOption).getNextMenuState();
 		} else
 		{
-			((MenuOptionForAction) chosenOption).getMenuAction().execute();
-			return this;
+			MenuOptionForAction menuOptionForAction = (MenuOptionForAction) chosenOption;
+			menuOptionForAction.getMenuAction().execute();
+			return menuOptionForAction.getNextMenuState();
 		}
 	}
 

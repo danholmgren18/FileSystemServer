@@ -7,24 +7,14 @@
 public class MenuOptionForMenu extends MenuOption
 {
 
-	private MenuStateEnum nextMenuState;
-
 	/**
 	 * @param menuOptionText the text that describes the option to the user
-	 * @param nextMenuState the state that the menu machine should move to if this option is selected
+	 * @param nextStateClass the class of the state that the menu machine should move to if this option is selected
 	 */
-	public MenuOptionForMenu(String menuOptionText, MenuStateEnum nextMenuState)
+	public MenuOptionForMenu(String menuOptionText, Class<? extends State> nextStateClass)
 	{
 		super.menuOptionText = menuOptionText;
-		this.nextMenuState = nextMenuState;
-	}
-
-	/**
-	 * @return the state associated with this option.
-	 */
-	public MenuStateEnum getNextMenuState()
-	{
-		return nextMenuState;
+		super.nextStateClass = nextStateClass;
 	}
 
 }
