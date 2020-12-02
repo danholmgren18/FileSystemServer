@@ -6,7 +6,7 @@ typedef sequence<octet> byteSeq;
   string sayHello();
   string readFile(in string title);
   oneway void shutdown();
-  string openFileLineNumber(in string title, in short lineNum);
+  string openFileForRead(in string title);
   string openFileForWrite(in string title, in short linenum);
   string updateFileAfterWrite(in string newLine, in string title, in short lineNum);
   };

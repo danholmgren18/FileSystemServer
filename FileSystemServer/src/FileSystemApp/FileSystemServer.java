@@ -20,8 +20,7 @@ import org.omg.PortableServer.POAHelper;
 class FileSystemImpl extends FileSystemPOA
 {
 	private ORB orb;
-	private ArrayList<File> listOfLocalFiles = new ArrayList<File>();
-	private ArrayList<FileInstance> listOfFiles = new ArrayList<FileInstance>();
+	private ArrayList<FileInstance> listOfLocalFiles = new ArrayList<FileInstance>();
 
 	public FileSystemImpl() 
 	{
@@ -33,14 +32,8 @@ class FileSystemImpl extends FileSystemPOA
   
  //Populates the array with names of files and directories
     for(int i = 0; i < files.length; i++) {
-      listOfLocalFiles.add(new File(s + "/Files/" + files[i]));
+      listOfLocalFiles.add(new FileInstance(new File(s + "/Files/" + files[i])));
     }
-    
-    //initialize listOfFiles
-    listOfFiles.add(new FileInstance("Penguin.txt"));
-    listOfFiles.add(new FileInstance("Hadgehorg.txt"));
-    listOfFiles.add(new FileInstance("test2.txt"));
-    
 	}
 	
 	public void setORB(ORB orb_val)
@@ -81,10 +74,10 @@ class FileSystemImpl extends FileSystemPOA
 	}
 
   @Override
-  public String openFileLineNumber(String title, short lineNum) {
+  public String openFileForRead(String title) {
     for(int i = 0; i < listOfLocalFiles.size(); i++) {
-      if (listOfLocalFiles.get(i).getName().equals(title)) {
-        return FileInstance.readLine(listOfLocalFiles.get(i), (int)lineNum);
+      if (listOfLocalFiles.get(i).getTitle().equals(title)) {
+        return FileInstance.getContents(listOfLocalFiles.get(i));
       }
     }
     return null;
@@ -95,7 +88,7 @@ class FileSystemImpl extends FileSystemPOA
    String targetLine = null;
     //Check to see if here
     for(int i = 0; i < listOfLocalFiles.size(); i++) {
-      if (listOfLocalFiles.get(i).getName().equals(title)) {
+      if (listOfLocalFiles.get(i).getTitle().equals(title)) {
         targetLine =  FileInstance.readLine(listOfLocalFiles.get(i), (int)lineNum);
       }
     }
@@ -127,7 +120,7 @@ class FileSystemImpl extends FileSystemPOA
   public String updateFileAfterWrite(String newLine, String title, short lineNum) {
     File f = null;
     for(int i = 0; i < listOfLocalFiles.size(); i++) {
-      if (listOfLocalFiles.get(i).getName().equals(title)) {
+      if (listOfLocalFiles.get(i).getTitle().equals(title)) {
         f = listOfLocalFiles.get(i);
       }
     }
