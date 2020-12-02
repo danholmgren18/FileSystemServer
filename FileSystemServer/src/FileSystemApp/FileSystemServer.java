@@ -84,25 +84,20 @@ class FileSystemImpl extends FileSystemPOA
   }
 
   @Override
-  public String openFileForWrite(String title, short lineNum) {
-   String targetLine = null;
+  public String openFileForWrite(String title) {
+    String targetFileContents = null;
+    int whichpos = -1;
     //Check to see if here
     for(int i = 0; i < listOfLocalFiles.size(); i++) {
       if (listOfLocalFiles.get(i).getTitle().equals(title)) {
-        targetLine =  FileInstance.readLine(listOfLocalFiles.get(i), (int)lineNum);
+        targetFileContents =  listOfLocalFiles.get(i).getContents();
+        whichpos = i;
       }
     }
-    if (targetLine == null) {
+    if (targetFileContents == null) {
       return "File Not Here";
     }
     
-    for(int i = 0; i < listOfFiles.size(); i++) {
-      if (listOfFiles.get(i).getTitle().equals(title)) {
-        if (listOfFiles.get(i).isLocked()) {
-          return "File Locked";
-        }
-      }
-    } 
     /*
      * This is where we check to see if locked and then lock if not
      * 
@@ -113,33 +108,7 @@ class FileSystemImpl extends FileSystemPOA
      * }
      */
 
-    return targetLine;
-  }
-
-  @Override
-  public String updateFileAfterWrite(String newLine, String title, short lineNum) {
-    File f = null;
-    for(int i = 0; i < listOfLocalFiles.size(); i++) {
-      if (listOfLocalFiles.get(i).getTitle().equals(title)) {
-        f = listOfLocalFiles.get(i);
-      }
-    }
-    
-    try {
-      List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
-      lines.set(lineNum, newLine);
-      Files.write(f.toPath(), lines, StandardCharsets.UTF_8);    
-    } catch (Exception e) {
-      return "Did not Update";
-    }
-    
-    /*
-     * Unlock the file on all servers and update version number
-     * while (list of servers txt file not EOF) {
-     *   server.unlock(title);
-     * }
-     */
-    return "Updated Successfully";
+    return targetFileContents;
   }
 
 }
