@@ -11,7 +11,7 @@ public class ReadState extends State
 {
 
 	private MenuOption[] myMenuOptions =
-		{ new MenuOptionForAction("Read file", new ReadAction(),ReadState.class),
+		{ new MenuOptionForAction("Read file", new ReadAction(), ReadState.class),
 		  new MenuOptionForMenu("Return to main menu", StartState.class), 
 				new MenuOptionForMenu("Exit", EndState.class) };
 	
