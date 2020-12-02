@@ -77,7 +77,7 @@ class FileSystemImpl extends FileSystemPOA
   public String openFileForRead(String title) {
     for(int i = 0; i < listOfLocalFiles.size(); i++) {
       if (listOfLocalFiles.get(i).getTitle().equals(title)) {
-        return FileInstance.getContents(listOfLocalFiles.get(i));
+        return listOfLocalFiles.get(i).getContents();
       }
     }
     return null;

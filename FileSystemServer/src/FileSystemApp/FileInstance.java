@@ -50,8 +50,19 @@ public class FileInstance {
       return null;
     }
 
-    public static String getContents(FileInstance fileInstance) {
-      // TODO Auto-generated method stub
+    public String getContents() {
+      Scanner sc;
+      String line = "version: " + version + '\n';
+      try {
+        sc = new Scanner(zehFile);
+        while(sc.hasNextLine()) {
+          line = line + '\n' + sc.nextLine();
+        }
+        sc.close();
+        return line;
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
+      }
       return null;
     }
 
