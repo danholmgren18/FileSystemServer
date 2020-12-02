@@ -30,7 +30,7 @@ class FileSystemImpl extends FileSystemPOA
     File f = new File(s + "/Files");
     String[] files = f.list();
   
- //Populates the array with names of files and directories
+    //Populates the array with names of files and directories
     for(int i = 0; i < files.length; i++) {
       listOfLocalFiles.add(new FileInstance(new File(s + "/Files/" + files[i])));
     }

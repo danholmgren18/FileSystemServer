@@ -31,7 +31,8 @@ public class ReadAction extends MenuAction
     // prompt the user to enter the name of the file and line number they want to read
     System.out.println("Enter the name of the file:");
     fileName = scan.nextLine();
-    System.out.println(fileSystemImpl.openFileForRead(fileName));
+    //System.out.println(fileSystemImpl.openFileForRead(fileName));
+    System.out.println(fileSystemImpl.sayHello());
     System.out.println("Enter the line number you would like to see:");   
     lineNumber = scan.nextLine();
     
