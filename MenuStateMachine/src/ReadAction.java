@@ -1,11 +1,14 @@
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Scanner;
 
 /**
- * This is a stupid action just to show how things work
+ * This is a stupid action just to show how things work ~ Merlin
  * 
  * This now is the action that is used to read a line from a file
  * 
- * @author merlin
+ * @author Marlee & Dan
  *
  */
 public class ReadAction extends MenuAction
@@ -33,16 +36,40 @@ public class ReadAction extends MenuAction
     try {
       lineNum = Integer.valueOf(lineNumber);
   } catch (NumberFormatException e) {
-    //while(lineNum != Integer.valueOf(lineNumber))
-    System.out.println("Error: Please enter an integer value for a line number!");
-    lineNum = scan.nextInt();
+       System.out.println("Error: Please enter an integer value for a line number!");
+       lineNum = scan.nextInt();
+       // TODO: Make it so it loops until they give you an integer
   }
+    
+   
     // check that file exists TODO
-    
-    
     
     System.out.println("Name: " + fileName + "  Line: " + lineNum);
 
+    // read the file
+    try {
+      FileReader fr = new FileReader(fileName);
+      int currentLine = 0; 
+      while (currentLine < lineNum) { // skip to the correct line in the file
+        currentLine++;
+      }
+      
+      // get line from file and store into a string
+      String line = "";
+      
+    
+//      int i;
+//      while ((i=fr.read()) != -1) 
+//       line = line + (char) i; 
+     
+      // Print out the line number
+      System.out.println(line);
+      
+    } catch ( IOException e) {
+      System.out.println("Error: Please enter a file name that exists.");
+      fileName = scan.nextLine();
+    }
+    
 	}
 
 }
