@@ -10,7 +10,7 @@ public class StartState extends State
 	private static final MenuOption[] x =
 		{ new MenuOptionForMenu("Open file for read", ReadState.class),
 				new MenuOptionForMenu("Open file for write", WriteState.class),
-				new MenuOptionForAction("This one does something", new WriteAction(), StartState.class),
+				new MenuOptionForAction("Ping Servers", new PingServerAction(), StartState.class),
 				new MenuOptionForMenu("Exit", EndState.class) };
 
 	/**
