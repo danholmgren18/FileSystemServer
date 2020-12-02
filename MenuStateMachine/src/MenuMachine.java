@@ -50,10 +50,12 @@ public class MenuMachine
 	 */
 	public static void main(String[] args)
 	{
+	  String[] arguments = {"java", "-Xmx10g", "-cp", ".:../../FileSystem/", "FileSystemApp.FileSystemClient",
+	                       "-ORBInitialHost", "clipper", "-ORBInitialPort", "1056", "-port", "1057"};
 	  try
     {
       // create and initialize the ORB
-      ORB orb = ORB.init(args, null);
+      ORB orb = ORB.init(arguments, null);
 
       // get the root naming context
       org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");

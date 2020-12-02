@@ -3,6 +3,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 
+import FileSystemApp.FileSystem;
+
 /**
  * This is a stupid action just to show how things work ~ Merlin
  * 
@@ -13,7 +15,7 @@ import java.util.Scanner;
  */
 public class ReadAction extends MenuAction
 {
-
+  static FileSystem fileSystemImpl;
 	/**
 	 * 
    * First prompt the user to enter the name of the file and file number they want to view
@@ -29,6 +31,7 @@ public class ReadAction extends MenuAction
     // prompt the user to enter the name of the file and line number they want to read
     System.out.println("Enter the name of the file:");
     fileName = scan.nextLine();
+    System.out.println(fileSystemImpl.openFileForRead(fileName));
     System.out.println("Enter the line number you would like to see:");   
     lineNumber = scan.nextLine();
     
