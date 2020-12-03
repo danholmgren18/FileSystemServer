@@ -10,6 +10,9 @@ typedef sequence<octet> byteSeq;
   string openFileForWrite(in string title);
   string closeRead(in string title);
   string closeWrite(in string title);
+
   string lockForWrite(in string title);
+  string unlockLocally(in string title);
+  string stopReadLocally(in string title);
   };
 };

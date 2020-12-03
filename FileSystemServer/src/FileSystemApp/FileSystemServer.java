@@ -77,6 +77,7 @@ class FileSystemImpl extends FileSystemPOA
   public String openFileForRead(String title) {
     for(int i = 0; i < listOfLocalFiles.size(); i++) {
       if (listOfLocalFiles.get(i).getTitle().equals(title)) {
+        listOfLocalFiles.get(i).startReading();
         return listOfLocalFiles.get(i).getContents();
       }
     }
@@ -115,11 +116,11 @@ class FileSystemImpl extends FileSystemPOA
       String name = "FileSystem";
       fileSystemImpl = FileSystemHelper.narrow(ncRef.resolve_str(name));
     } catch (Exception e) {
-      return "Could Not Lock";
+      return "Failed";
     }
     
-    if(!(fileSystemImpl.lockForWrite(title)).equals("Successfully Locked")) {
-      return "Could Not Lock";
+    if(!(fileSystemImpl.lockForWrite(title)).equals("Success")) {
+      return "Failed";
     }
 
     return targetFileContents;
@@ -127,17 +128,35 @@ class FileSystemImpl extends FileSystemPOA
 
   @Override
   public String closeRead(String title) {
-    /*
-     * while (list of servers txt file not EOF) {
-     *   server.closeRead(title)
-     *   make sure its ack'd
-     * } 
-     * 
-     * if(all are ack'd){
-     *   return ack
-     * }
-     */
-    return null;
+    
+    FileSystem fileSystemImpl;
+    String[] arguments = { "java", "-Xmx10g", "-cp", ".:../../FileSystem/", "FileSystemApp.FileSystemClient",
+        "-ORBInitialHost", "lsaremotees", "-ORBInitialPort", "1056", "-port", "1057" };
+    try {
+      // create and initialize the ORB
+      ORB orb = ORB.init(arguments, null);
+
+      // get the root naming context
+      org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
+      // Use NamingContextExt instead of NamingContext. This is
+      // part of the Interoperable naming Service.
+      NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
+
+      // resolve the Object Reference in Naming
+      String name = "FileSystem";
+      fileSystemImpl = FileSystemHelper.narrow(ncRef.resolve_str(name));
+    } catch (Exception e) {
+      return "Failed";
+    }
+    
+    if(stopReadLocally(title).equals("Failed")) {
+      return "Failed";
+    }
+    
+    if(!(fileSystemImpl.stopReadLocally(title)).equals("Success")) {
+      return "Failed";
+    } 
+    return "Success";
   }
 
   @Override
@@ -160,30 +179,59 @@ class FileSystemImpl extends FileSystemPOA
       String name = "FileSystem";
       fileSystemImpl = FileSystemHelper.narrow(ncRef.resolve_str(name));
     } catch (Exception e) {
-      return "Could Not Unlock";
+      return "Failed";
     }
     
-    if(!(fileSystemImpl.unlock(title)).equals("Successfully Unlocked")) {
-      return "Could Not Unlock";
+    if(unlockLocally(title).equals("Failed")) {
+      return "Failed";
+    }
+    
+    if(!(fileSystemImpl.unlockLocally(title)).equals("Success")) {
+      return "Failed";
     } 
-    return "Successfully Unlocked";
+    return "Success";
   }
 
+  /*
+   * Locks the local file. Called by A server
+   */
  @Override
   public String lockForWrite(String title) {
    
    for(int i = 0; i < listOfLocalFiles.size(); i++) {
      if (listOfLocalFiles.get(i).getTitle().equals(title)) {
        if( listOfLocalFiles.get(i).isLocked()) {
-         return "Could Not Lock";
+         return "Failed";
        } else { 
          listOfLocalFiles.get(i).setLocked(true);
-         return "Successfully Locked";
+         return "Success";
        }
      }
    }
     return null;
   }
+
+@Override
+public String unlockLocally(String title) {
+    for(int i = 0; i < listOfLocalFiles.size(); i++) {
+      if (listOfLocalFiles.get(i).getTitle().equals(title)) {
+        listOfLocalFiles.get(i).setLocked(false);
+        return "Success";
+      }
+    }
+    return "Failed";
+}
+
+@Override
+public String stopReadLocally(String title) {
+    for(int i = 0; i < listOfLocalFiles.size(); i++) {
+      if (listOfLocalFiles.get(i).getTitle().equals(title)) {
+        listOfLocalFiles.get(i).stopReading();
+        return "Success";
+      }
+    }
+    return "Failed";
+}
 
 }
 

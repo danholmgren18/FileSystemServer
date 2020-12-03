@@ -9,6 +9,9 @@ public class FileInstance {
     private String fileTitle;
     private File zehFile;
     private int version = 0;
+    private int amntOfPeopleReading = 0;
+    
+
     private boolean isLocked = false;
     
     
@@ -16,7 +19,15 @@ public class FileInstance {
       zehFile = file;
       fileTitle = zehFile.getName();
     }
-    
+    public int getAmntOfPeopleReading() {
+      return amntOfPeopleReading;
+    }
+    public void startReading() {
+      amntOfPeopleReading ++;
+    }
+    public void stopReading() {
+      amntOfPeopleReading --;
+    }
     public boolean isLocked() {
       return isLocked;
     }
