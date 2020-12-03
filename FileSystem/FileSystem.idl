@@ -8,5 +8,8 @@ typedef sequence<octet> byteSeq;
   oneway void shutdown();
   string openFileForRead(in string title);
   string openFileForWrite(in string title);
+  string closeRead(in string title);
+  string closeWrite(in string title);
+  string lockForWrite(in string title);
   };
 };

@@ -105,10 +105,56 @@ class FileSystemImpl extends FileSystemPOA
      * 
      * while (list of servers txt file not EOF) {
      *   server.lockForWrite(title)
+     *   make sure its ack'd
      * }
      */
 
     return targetFileContents;
+  }
+
+  @Override
+  public String closeRead(String title) {
+    /*
+     * while (list of servers txt file not EOF) {
+     *   server.closeRead(title)
+     *   make sure its ack'd
+     * } 
+     * 
+     * if(all are ack'd){
+     *   return ack
+     * }
+     */
+    return null;
+  }
+
+  @Override
+  public String closeWrite(String title) {
+    /*
+     * while (list of servers txt file not EOF) {
+     *   server.closeWrite(title)
+     *   make sure its ack'd
+     * } 
+     * 
+     * if(all are ack'd){
+     *   return ack
+     * }
+     */
+    return null;
+  }
+
+  @Override
+  public String lockForWrite(String title) {
+    /*
+     * while (list of servers txt file not EOF) {
+     *   server.lockForWrite(title)
+     *   make sure its ack'd
+     * } 
+     * 
+     * if(all are ack'd){
+     *   return ack
+     * }
+     */
+    return null;
   }
 
 }
