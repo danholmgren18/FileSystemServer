@@ -98,16 +98,29 @@ class FileSystemImpl extends FileSystemPOA
       return "File Not Here";
     }
     
-    /*
-     * This is where we check to see if locked and then lock if not
-     * 
-     * Call the methods for every server to lock
-     * 
-     * while (list of servers txt file not EOF) {
-     *   server.lockForWrite(title)
-     *   make sure its ack'd
-     * }
-     */
+    FileSystem fileSystemImpl;
+    String[] arguments = { "java", "-Xmx10g", "-cp", ".:../../FileSystem/", "FileSystemApp.FileSystemClient",
+        "-ORBInitialHost", "lsaremotees", "-ORBInitialPort", "1056", "-port", "1057" };
+    try {
+      // create and initialize the ORB
+      ORB orb = ORB.init(arguments, null);
+
+      // get the root naming context
+      org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
+      // Use NamingContextExt instead of NamingContext. This is
+      // part of the Interoperable naming Service.
+      NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
+
+      // resolve the Object Reference in Naming
+      String name = "FileSystem";
+      fileSystemImpl = FileSystemHelper.narrow(ncRef.resolve_str(name));
+    } catch (Exception e) {
+      return "Could Not Lock";
+    }
+    
+    if(!(fileSystemImpl.lockForWrite(title)).equals("Successfully Locked")) {
+      return "Could Not Lock";
+    }
 
     return targetFileContents;
   }
@@ -129,31 +142,46 @@ class FileSystemImpl extends FileSystemPOA
 
   @Override
   public String closeWrite(String title) {
-    /*
-     * while (list of servers txt file not EOF) {
-     *   server.closeWrite(title)
-     *   make sure its ack'd
-     * } 
-     * 
-     * if(all are ack'd){
-     *   return ack
-     * }
-     */
-    return null;
+    
+    FileSystem fileSystemImpl;
+    String[] arguments = { "java", "-Xmx10g", "-cp", ".:../../FileSystem/", "FileSystemApp.FileSystemClient",
+        "-ORBInitialHost", "lsaremotees", "-ORBInitialPort", "1056", "-port", "1057" };
+    try {
+      // create and initialize the ORB
+      ORB orb = ORB.init(arguments, null);
+
+      // get the root naming context
+      org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
+      // Use NamingContextExt instead of NamingContext. This is
+      // part of the Interoperable naming Service.
+      NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
+
+      // resolve the Object Reference in Naming
+      String name = "FileSystem";
+      fileSystemImpl = FileSystemHelper.narrow(ncRef.resolve_str(name));
+    } catch (Exception e) {
+      return "Could Not Unlock";
+    }
+    
+    if(!(fileSystemImpl.unlock(title)).equals("Successfully Unlocked")) {
+      return "Could Not Unlock";
+    } 
+    return "Successfully Unlocked";
   }
 
-  @Override
+ @Override
   public String lockForWrite(String title) {
-    /*
-     * while (list of servers txt file not EOF) {
-     *   server.lockForWrite(title)
-     *   make sure its ack'd
-     * } 
-     * 
-     * if(all are ack'd){
-     *   return ack
-     * }
-     */
+   
+   for(int i = 0; i < listOfLocalFiles.size(); i++) {
+     if (listOfLocalFiles.get(i).getTitle().equals(title)) {
+       if( listOfLocalFiles.get(i).isLocked()) {
+         return "Could Not Lock";
+       } else { 
+         listOfLocalFiles.get(i).setLocked(true);
+         return "Successfully Locked";
+       }
+     }
+   }
     return null;
   }
 
