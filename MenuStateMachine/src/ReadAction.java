@@ -29,7 +29,7 @@ public class ReadAction extends MenuAction {
   @Override
   void execute() {
     String[] arguments = { "java", "-Xmx10g", "-cp", ".:../../FileSystem/", "FileSystemApp.FileSystemClient",
-        "-ORBInitialHost", "lsaremotees", "-ORBInitialPort", "1056", "-port", "1057" };
+        "-ORBInitialHost", "lsaremotede", "-ORBInitialPort", "1056", "-port", "1057" };
     try {
       // create and initialize the ORB
       ORB orb = ORB.init(arguments, null);
