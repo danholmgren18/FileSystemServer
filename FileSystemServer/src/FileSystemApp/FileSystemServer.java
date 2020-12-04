@@ -88,28 +88,28 @@ class FileSystemImpl extends FileSystemPOA
       return "File Not Here";
     }
     
-    FileSystem fileSystemImpl;
-    String[] arguments = { "java", "-Xmx10g", "-cp", ".:../../FileSystem/", "FileSystemApp.FileSystemClient",
-        "-ORBInitialHost", "lsaremotees", "-ORBInitialPort", "1056", "-port", "1057" };
-    try {
-      // create and initialize the ORB
-      ORB orb = ORB.init(arguments, null);
-
-      // get the root naming context
-      org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
-      // Use NamingContextExt instead of NamingContext. This is
-      // part of the Interoperable naming Service.
-      NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
-
-      // resolve the Object Reference in Naming
-      String name = "FileSystem";
-      fileSystemImpl = FileSystemHelper.narrow(ncRef.resolve_str(name));
-    } catch (Exception e) {
-      return "Failed";
-    }
+//    FileSystem fileSystemImpl;
+//    String[] arguments = { "java", "-Xmx10g", "-cp", ".:../../FileSystem/", "FileSystemApp.FileSystemClient",
+//        "-ORBInitialHost", "lsaremotees", "-ORBInitialPort", "1056", "-port", "1057" };
+//    try {
+//      // create and initialize the ORB
+//      ORB orb = ORB.init(arguments, null);
+//
+//      // get the root naming context
+//      org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
+//      // Use NamingContextExt instead of NamingContext. This is
+//      // part of the Interoperable naming Service.
+//      NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
+//
+//      // resolve the Object Reference in Naming
+//      String name = "FileSystem";
+//      fileSystemImpl = FileSystemHelper.narrow(ncRef.resolve_str(name));
+//    } catch (Exception e) {
+//      return "Failed";
+//    }
     for(int i = 0; i < listOfLocalFiles.size(); i++) {
       if (listOfLocalFiles.get(i).getTitle().equals(title)) {
-        listOfLocalFiles.get(i).startReading();
+//      listOfLocalFiles.get(i).startReading();
         return listOfLocalFiles.get(i).getContents();
       }
     }
@@ -263,6 +263,15 @@ public String stopReadLocally(String title) {
       }
     }
     return "Failed";
+}
+
+@Override
+public boolean createLocalFile(String title) {
+  Path currentRelativePath = Paths.get("");
+  String s = currentRelativePath.toAbsolutePath().toString() + "/..";
+
+ listOfLocalFiles.add(new FileInstance(new File(s + "/Files/" + title)));
+ return true;
 }
 
 }
