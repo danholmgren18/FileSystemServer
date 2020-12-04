@@ -6,14 +6,20 @@ typedef sequence<octet> byteSeq;
   string sayHello();
   string readFile(in string title);
   oneway void shutdown();
+  
   string openFileForRead(in string title);
   string openFileForWrite(in string title);
+
   string closeRead(in string title);
   string closeWrite(in string title);
+
   boolean createLocalFile(in string title);
 
   string lockForWrite(in string title);
   string unlockLocally(in string title);
+
+  string startReadLocally(in string title);
   string stopReadLocally(in string title);
+
   };
 };

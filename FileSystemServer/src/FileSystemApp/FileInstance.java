@@ -63,7 +63,7 @@ public class FileInstance {
 
     public String getContents() {
       Scanner sc;
-      String line = "version: " + version + '\n';
+      String line = "";
       try {
         sc = new Scanner(zehFile);
         while(sc.hasNextLine()) {

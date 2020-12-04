@@ -132,7 +132,7 @@ public class ReadAction extends MenuAction {
       
       arguments[6] = localServer;
       
-      // Step 1:create orb
+      // create an orb using local server argument to update the server with the new local file
       try {
         
         // create and initialize the ORB
