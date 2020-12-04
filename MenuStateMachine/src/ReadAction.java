@@ -1,8 +1,10 @@
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
@@ -47,7 +49,7 @@ public class ReadAction extends MenuAction {
     System.out.println("Enter the name of the file:");
     fileName = userScan.nextLine();
     try {
-      scanner = new Scanner(new File("Servers.txt"));
+      scanner = new Scanner(new File("../Servers.txt"));
       
       
       while (scanner.hasNextLine())
@@ -114,10 +116,15 @@ public class ReadAction extends MenuAction {
       
       // use a FileWriter to fill the file with the fileContents
       FileWriter myWriter;
+      BufferedWriter output = null;
       try {
-        myWriter = new FileWriter(file);
-        myWriter.write(fileContents);
-        myWriter.close();
+//        myWriter = new FileWriter(file);
+//        myWriter.write(fileContents);
+//        myWriter.close();
+      
+        output = new BufferedWriter(new FileWriter(file));
+        output.write(fileContents);
+        
       } catch (IOException e1) {
         System.out.println("Unable to write the File");
       }
