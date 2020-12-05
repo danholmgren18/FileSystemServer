@@ -2,12 +2,9 @@ package FileSystemApp;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 import org.omg.CORBA.ORB;
@@ -67,18 +64,7 @@ class FileSystemImpl extends FileSystemPOA {
   @Override
   public String openFileForRead(String title) {
 
-    String targetFileContents = null;
-    int whichpos = -1;
-    // Check to see if here
-    for (int i = 0; i < listOfLocalFiles.size(); i++) {
-      if (listOfLocalFiles.get(i).getTitle().equals(title)) {
-        if (listOfLocalFiles.get(i).isLocked()) { // You cant read the file if it is locked for write
-          return "Is Locked";
-        }
-        targetFileContents = listOfLocalFiles.get(i).getContents();
-        whichpos = i;
-      }
-    }
+    String targetFileContents = fileFinder(title).getContents();
     if (targetFileContents == null) {
       return "File Not Here";
     }
@@ -97,30 +83,20 @@ class FileSystemImpl extends FileSystemPOA {
           return "Failed in " + tokens[0];
         }
       }
+      scanner.close();
     } catch (FileNotFoundException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
-    targetFileContents = "Version: " + listOfLocalFiles.get(whichpos).getVersion() + "\n" + "AmountPeopleReading: "
-        + listOfLocalFiles.get(whichpos).getAmntOfPeopleReading() + "\n" + targetFileContents;
+    targetFileContents = "Version: " + fileFinder(title).getVersion() + "\n" + "AmountPeopleReading: "
+        + fileFinder(title).getAmntOfPeopleReading() + "\n" + targetFileContents;
     return targetFileContents;
   }
 
   @Override
   public String openFileForWrite(String title) {
-    String targetFileContents = null;
-    int whichpos = -1;
-    // Check to see if here
-    for (int i = 0; i < listOfLocalFiles.size(); i++) {
-      if (listOfLocalFiles.get(i).getTitle().equals(title)) {
-        if (listOfLocalFiles.get(i).isLocked()) {
-          return "Is Locked";
-        }
-        targetFileContents = listOfLocalFiles.get(i).getContents();
-        whichpos = i;
-      }
-    }
+    String targetFileContents = fileFinder(title).getContents();
     if (targetFileContents == null) {
       return "File Not Here";
     }
@@ -149,7 +125,8 @@ class FileSystemImpl extends FileSystemPOA {
               FileSystem fileSystemImplDos = makeConnection(tokensDos[1]);
               fileSystemImplDos.unlockLocally(title);
               lineNumDos++;
-            }
+            }      
+            scannerDos.close();
           } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -158,6 +135,7 @@ class FileSystemImpl extends FileSystemPOA {
         }
         lineNum++;
       }
+      scanner.close();
     } catch (FileNotFoundException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -184,6 +162,7 @@ class FileSystemImpl extends FileSystemPOA {
           return "Failed in " + tokens[0];
         }
       }
+      scanner.close();
     } catch (FileNotFoundException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -210,6 +189,7 @@ class FileSystemImpl extends FileSystemPOA {
           return "Failed in " + tokens[0];
         }
       }
+      scanner.close();
     } catch (FileNotFoundException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -222,51 +202,30 @@ class FileSystemImpl extends FileSystemPOA {
    */
   @Override
   public String lockForWrite(String title) {
-
-    for (int i = 0; i < listOfLocalFiles.size(); i++) {
-      if (listOfLocalFiles.get(i).getTitle().equals(title)) {
-        if (listOfLocalFiles.get(i).isLocked()) {
-          return "Failed";
-        } else {
-          listOfLocalFiles.get(i).setLocked(true);
-          return "Success";
-        }
-      }
+    if (fileFinder(title).isLocked()) {
+      return "Failed";
+    } else {
+      fileFinder(title).setLocked(true);
+      return "Success";
     }
-    return null;
   }
 
   @Override
   public String unlockLocally(String title) {
-    for (int i = 0; i < listOfLocalFiles.size(); i++) {
-      if (listOfLocalFiles.get(i).getTitle().equals(title)) {
-        listOfLocalFiles.get(i).setLocked(false);
-        return "Success";
-      }
-    }
-    return "Failed";
+    fileFinder(title).setLocked(false);
+    return "Success";
   }
 
   @Override
   public String stopReadLocally(String title) {
-    for (int i = 0; i < listOfLocalFiles.size(); i++) {
-      if (listOfLocalFiles.get(i).getTitle().equals(title)) {
-        listOfLocalFiles.get(i).stopReading();
+        fileFinder(title).stopReading();
         return "Success";
-      }
-    }
-    return "Failed";
   }
 
   @Override
   public String startReadLocally(String title) {
-    for (int i = 0; i < listOfLocalFiles.size(); i++) {
-      if (listOfLocalFiles.get(i).getTitle().equals(title)) {
-        listOfLocalFiles.get(i).startReading();
-        return "Success";
-      }
-    }
-    return "Failed";
+    fileFinder(title).startReading();
+    return "Success";
   }
 
   @Override
@@ -311,60 +270,74 @@ class FileSystemImpl extends FileSystemPOA {
     }
     return fileSystemImpl;
   }
-}
-
-/**
- * This is the class that runs on the server
- * 
- * @author merlin
- *
- */
-public class FileSystemServer {
 
   /**
-   * @param args ignored
+   * Searches the list listOfLocalFiles for the requested file
+   * @param title The title of the file
+   * @return the FileInstance of the file
    */
-  public static void main(String args[]) {
-    try {
-      // create and initialize the ORB
-      ORB orb = ORB.init(args, null);
-
-      // get reference to rootpoa & activate the POAManager
-      POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
-      rootpoa.the_POAManager().activate();
-
-      // create servant and register it with the ORB
-      FileSystemImpl fileSystemImpl = new FileSystemImpl();
-      fileSystemImpl.setORB(orb);
-
-      // get object reference from the servant
-      org.omg.CORBA.Object ref = rootpoa.servant_to_reference(fileSystemImpl);
-      FileSystem href = FileSystemHelper.narrow(ref);
-
-      // get the root naming context
-      // NameService invokes the name service
-      org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
-      // Use NamingContextExt which is part of the Interoperable
-      // Naming Service (INS) specification.
-      NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
-
-      // bind the Object Reference in Naming
-      String name = "FileSystem";
-      NameComponent path[] = ncRef.to_name(name);
-      ncRef.rebind(path, href);
-
-      System.out.println("FileSystemServer ready and waiting ...");
-
-      // wait for invocations from clients
-      orb.run();
+  public FileInstance fileFinder(String title) {
+    for (FileInstance n : listOfLocalFiles) {
+      if ((n.getTitle().equals(title)) && !n.isLocked()) {
+        return n;
+      }
     }
+    return null;
+  }
 
-    catch (Exception e) {
-      System.err.println("ERROR: " + e);
-      e.printStackTrace(System.out);
+  /**
+   * This is the class that runs on the server
+   * 
+   * @author merlin
+   *
+   */
+  public class FileSystemServer {
+
+    /**
+     * @param args ignored
+     */
+    public void main(String args[]) {
+      try {
+        // create and initialize the ORB
+        ORB orb = ORB.init(args, null);
+
+        // get reference to rootpoa & activate the POAManager
+        POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
+        rootpoa.the_POAManager().activate();
+
+        // create servant and register it with the ORB
+        FileSystemImpl fileSystemImpl = new FileSystemImpl();
+        fileSystemImpl.setORB(orb);
+
+        // get object reference from the servant
+        org.omg.CORBA.Object ref = rootpoa.servant_to_reference(fileSystemImpl);
+        FileSystem href = FileSystemHelper.narrow(ref);
+
+        // get the root naming context
+        // NameService invokes the name service
+        org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
+        // Use NamingContextExt which is part of the Interoperable
+        // Naming Service (INS) specification.
+        NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
+
+        // bind the Object Reference in Naming
+        String name = "FileSystem";
+        NameComponent path[] = ncRef.to_name(name);
+        ncRef.rebind(path, href);
+
+        System.out.println("FileSystemServer ready and waiting ...");
+
+        // wait for invocations from clients
+        orb.run();
+      }
+
+      catch (Exception e) {
+        System.err.println("ERROR: " + e);
+        e.printStackTrace(System.out);
+      }
+
+      System.out.println("FileSystemServer Exiting ...");
+
     }
-
-    System.out.println("FileSystemServer Exiting ...");
-
   }
 }

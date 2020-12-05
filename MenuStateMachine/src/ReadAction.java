@@ -126,6 +126,7 @@ public class ReadAction extends MenuAction {
         output.write(fileContents);
         
       } catch (IOException e1) {
+        e1.printStackTrace();
         System.out.println("Unable to write the File");
       }
       

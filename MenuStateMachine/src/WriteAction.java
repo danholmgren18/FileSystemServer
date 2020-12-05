@@ -18,8 +18,10 @@ public class WriteAction extends MenuAction
 		Scanner keyboard = new Scanner(System.in);
 		System.out.println("Give me input for this action");
 		String input = keyboard.nextLine();
-		System.out.println("I can some something with this input: " + input);
+		System.out.println("I can do something with this input: " + input);
 		
+		
+		keyboard.close();
 	}
 
 }
