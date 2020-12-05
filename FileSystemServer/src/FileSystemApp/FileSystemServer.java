@@ -66,11 +66,15 @@ class FileSystemImpl extends FileSystemPOA {
 
   @Override
   public String openFileForRead(String title) {
+
     String targetFileContents = null;
     int whichpos = -1;
     // Check to see if here
     for (int i = 0; i < listOfLocalFiles.size(); i++) {
       if (listOfLocalFiles.get(i).getTitle().equals(title)) {
+        if (listOfLocalFiles.get(i).isLocked()) { // You cant read the file if it is locked for write
+          return "Is Locked";
+        }
         targetFileContents = listOfLocalFiles.get(i).getContents();
         whichpos = i;
       }
@@ -79,17 +83,17 @@ class FileSystemImpl extends FileSystemPOA {
       return "File Not Here";
     }
     /**
-     * Loops through servers in Servers.txt and calls startReadLocally on each in turn
+     * Loops through servers in Servers.txt and calls startReadLocally on each in
+     * turn
      */
     try {
       Scanner scanner = new Scanner(new File("../Servers.txt"));
-      while (scanner.hasNextLine())
-      {
-        String [] tokens = scanner.nextLine().split(" "); //Takes in the next line of the file and splits it at tokens
-       
+      while (scanner.hasNextLine()) {
+        String[] tokens = scanner.nextLine().split(" "); // Takes in the next line of the file and splits it at tokens
+
         // update the arugments[] array with the correct server name
         FileSystem fileSystemImpl = makeConnection(tokens[1]);
-        if(fileSystemImpl.startReadLocally(title).equals("Failed")) {
+        if (fileSystemImpl.startReadLocally(title).equals("Failed")) {
           return "Failed in " + tokens[0];
         }
       }
@@ -97,10 +101,9 @@ class FileSystemImpl extends FileSystemPOA {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    
-    
-    targetFileContents = "Version: " + listOfLocalFiles.get(whichpos).getVersion() + "\n" + 
-        "AmountPeopleReading: " + listOfLocalFiles.get(whichpos).getAmntOfPeopleReading() + "\n" + targetFileContents;
+
+    targetFileContents = "Version: " + listOfLocalFiles.get(whichpos).getVersion() + "\n" + "AmountPeopleReading: "
+        + listOfLocalFiles.get(whichpos).getAmntOfPeopleReading() + "\n" + targetFileContents;
     return targetFileContents;
   }
 
@@ -111,6 +114,9 @@ class FileSystemImpl extends FileSystemPOA {
     // Check to see if here
     for (int i = 0; i < listOfLocalFiles.size(); i++) {
       if (listOfLocalFiles.get(i).getTitle().equals(title)) {
+        if (listOfLocalFiles.get(i).isLocked()) {
+          return "Is Locked";
+        }
         targetFileContents = listOfLocalFiles.get(i).getContents();
         whichpos = i;
       }
@@ -119,28 +125,42 @@ class FileSystemImpl extends FileSystemPOA {
       return "File Not Here";
     }
 
-    FileSystem fileSystemImpl;
-    String[] arguments = { "java", "-Xmx10g", "-cp", ".:../../FileSystem/", "FileSystemApp.FileSystemClient",
-        "-ORBInitialHost", "lsaremotees", "-ORBInitialPort", "1056", "-port", "1057" };
+    /**
+     * Loops through servers in Servers.txt and calls lockForWrite on each in turn
+     */
     try {
-      // create and initialize the ORB
-      ORB orb = ORB.init(arguments, null);
+      Scanner scanner = new Scanner(new File("../Servers.txt"));
+      int lineNum = 0;
+      while (scanner.hasNextLine()) {
+        String[] tokens = scanner.nextLine().split(" "); // Takes in the next line of the file and splits it at tokens
 
-      // get the root naming context
-      org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
-      // Use NamingContextExt instead of NamingContext. This is
-      // part of the Interoperable naming Service.
-      NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
-
-      // resolve the Object Reference in Naming
-      String name = "FileSystem";
-      fileSystemImpl = FileSystemHelper.narrow(ncRef.resolve_str(name));
-    } catch (Exception e) {
-      return "Failed";
-    }
-
-    if (!(fileSystemImpl.lockForWrite(title)).equals("Success")) {
-      return "Failed";
+        // update the arugments[] array with the correct server name
+        FileSystem fileSystemImpl = makeConnection(tokens[1]);
+        if (fileSystemImpl.lockForWrite(title).equals("Failed")) {
+          // If it fails to lock one of the servers we need to unlock any that we might
+          // have already locked
+          int lineNumDos = 0;
+          try {
+            Scanner scannerDos = new Scanner(new File("../Servers.txt"));
+            while (scannerDos.hasNextLine() || lineNumDos <= lineNum) {
+              String[] tokensDos = scannerDos.nextLine().split(" "); // Takes in the next line of the file and splits it
+                                                                     // at tokens
+              // update the arugments[] array with the correct server name
+              FileSystem fileSystemImplDos = makeConnection(tokensDos[1]);
+              fileSystemImplDos.unlockLocally(title);
+              lineNumDos++;
+            }
+          } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+          return "Failed in " + tokens[0];
+        }
+        lineNum++;
+      }
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
 
     return targetFileContents;
@@ -149,65 +169,50 @@ class FileSystemImpl extends FileSystemPOA {
   @Override
   public String closeRead(String title) {
 
-    FileSystem fileSystemImpl;
-    String[] arguments = { "java", "-Xmx10g", "-cp", ".:../../FileSystem/", "FileSystemApp.FileSystemClient",
-        "-ORBInitialHost", "lsaremotees", "-ORBInitialPort", "1056", "-port", "1057" };
+    /**
+     * Loops through servers in Servers.txt and calls stopReadLocally on each in
+     * turn
+     */
     try {
-      // create and initialize the ORB
-      ORB orb = ORB.init(arguments, null);
+      Scanner scanner = new Scanner(new File("../Servers.txt"));
+      while (scanner.hasNextLine()) {
+        String[] tokens = scanner.nextLine().split(" "); // Takes in the next line of the file and splits it at tokens
 
-      // get the root naming context
-      org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
-      // Use NamingContextExt instead of NamingContext. This is
-      // part of the Interoperable naming Service.
-      NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
-
-      // resolve the Object Reference in Naming
-      String name = "FileSystem";
-      fileSystemImpl = FileSystemHelper.narrow(ncRef.resolve_str(name));
-    } catch (Exception e) {
-      return "Failed";
+        // update the arugments[] array with the correct server name
+        FileSystem fileSystemImpl = makeConnection(tokens[1]);
+        if (fileSystemImpl.stopReadLocally(title).equals("Failed")) {
+          return "Failed in " + tokens[0];
+        }
+      }
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
 
-    if (stopReadLocally(title).equals("Failed")) {
-      return "Failed";
-    }
-
-    if (!(fileSystemImpl.stopReadLocally(title)).equals("Success")) {
-      return "Failed";
-    }
     return "Success";
   }
 
   @Override
   public String closeWrite(String title) {
 
-    FileSystem fileSystemImpl;
-    String[] arguments = { "java", "-Xmx10g", "-cp", ".:../../FileSystem/", "FileSystemApp.FileSystemClient",
-        "-ORBInitialHost", "lsaremotees", "-ORBInitialPort", "1056", "-port", "1057" };
+    /**
+     * Loops through servers in Servers.txt and calls startReadLocally on each in
+     * turn
+     */
     try {
-      // create and initialize the ORB
-      ORB orb = ORB.init(arguments, null);
+      Scanner scanner = new Scanner(new File("../Servers.txt"));
+      while (scanner.hasNextLine()) {
+        String[] tokens = scanner.nextLine().split(" "); // Takes in the next line of the file and splits it at tokens
 
-      // get the root naming context
-      org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
-      // Use NamingContextExt instead of NamingContext. This is
-      // part of the Interoperable naming Service.
-      NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
-
-      // resolve the Object Reference in Naming
-      String name = "FileSystem";
-      fileSystemImpl = FileSystemHelper.narrow(ncRef.resolve_str(name));
-    } catch (Exception e) {
-      return "Failed";
-    }
-
-    if (unlockLocally(title).equals("Failed")) {
-      return "Failed";
-    }
-
-    if (!(fileSystemImpl.unlockLocally(title)).equals("Success")) {
-      return "Failed";
+        // update the arugments[] array with the correct server name
+        FileSystem fileSystemImpl = makeConnection(tokens[1]);
+        if (fileSystemImpl.unlockLocally(title).equals("Failed")) {
+          return "Failed in " + tokens[0];
+        }
+      }
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
     return "Success";
   }
@@ -252,7 +257,7 @@ class FileSystemImpl extends FileSystemPOA {
     }
     return "Failed";
   }
-  
+
   @Override
   public String startReadLocally(String title) {
     for (int i = 0; i < listOfLocalFiles.size(); i++) {
@@ -282,8 +287,6 @@ class FileSystemImpl extends FileSystemPOA {
     FileSystem fileSystemImpl = null;
     String[] arguments = { "java", "-Xmx10g", "-cp", ".:../../FileSystem/", "FileSystemApp.FileSystemClient",
         "-ORBInitialHost", "", "-ORBInitialPort", "1056", "-port", "1057" };
-
-    String localServer = "";
     // First find what server you are on then update the arugments[] array with the
     // correct server name argument
     arguments[6] = whichServer;
@@ -309,6 +312,7 @@ class FileSystemImpl extends FileSystemPOA {
     return fileSystemImpl;
   }
 }
+
 /**
  * This is the class that runs on the server
  * 
