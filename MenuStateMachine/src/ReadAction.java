@@ -4,9 +4,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import org.omg.CORBA.ORB;
@@ -36,38 +39,39 @@ public class ReadAction extends MenuAction {
   void execute() {
     String[] arguments = { "java", "-Xmx10g", "-cp", ".:../../FileSystem/", "FileSystemApp.FileSystemClient",
         "-ORBInitialHost", "lsaremotede", "-ORBInitialPort", "1056", "-port", "1057" };
-    
+
     // loop to walk through all 3 servers (clipper, Germany, Spain)
     Scanner scanner;
     int count = 0;
     String fileName, fileContents = null;
-    int fileFound = -1; // -1 means no file found, 0 means found on clipper, 1 means found in germany, 2 means found in spain
+    int fileFound = -1; // -1 means no file found, 0 means found on clipper, 1 means found in germany, 2
+                        // means found in spain
     String localServer = "";
     Scanner userScan = new Scanner(System.in);
-    
+
     // Ask user for file
     System.out.println("Enter the name of the file:");
     fileName = userScan.nextLine();
     try {
       scanner = new Scanner(new File("../Servers.txt"));
-      
-      
-      while (scanner.hasNextLine())
-      {
-        // First find what server you are on then update the arugments[] array with the correct server name argument
+
+      while (scanner.hasNextLine()) {
+        // First find what server you are on then update the arugments[] array with the
+        // correct server name argument
         String serverArgument = ""; // will hold the correct sever argument (ex. lsaremotede)
-        String theLine = scanner.nextLine(); // stores the line with server location, argument, and server address (seperated by spaces)
-        String [] tokens = theLine.split(" ");
-       
+        String theLine = scanner.nextLine(); // stores the line with server location, argument, and server address
+                                             // (seperated by spaces)
+        String[] tokens = theLine.split(" ");
+
         // update the arugments[] array with the correct server name
         serverArgument = tokens[1];
         arguments[6] = serverArgument;
         if (count == 0) {
-          localServer = serverArgument; 
-         }
+          localServer = serverArgument;
+        }
         // Step 1:create orb
         try {
-          
+
           // create and initialize the ORB
           ORB orb = ORB.init(arguments, null);
 
@@ -84,12 +88,11 @@ public class ReadAction extends MenuAction {
           System.out.println("ERROR : " + e);
           e.printStackTrace(System.out);
         }
-        
-        
+
         fileContents = fileSystemImpl.openFileForRead(fileName);
-        
+
         // Step 3: see if file is local
-        
+
         if (fileContents.equals("File Not Here")) { // condition: if file is located on the server
           System.out.println("File not on : " + serverArgument);
         } else { // if the file is found, break from loop and continue to file actions
@@ -100,42 +103,23 @@ public class ReadAction extends MenuAction {
         count++;
       }
     } catch (FileNotFoundException e1) {
-     System.out.println("Error! Servers.txt file is unreachable");
+      System.out.println("Error! Servers.txt file is unreachable");
     }
-    
-    if (fileFound == 0) { //This means that the file was found locally and we dont need to create a new file for it
+
+    if (fileFound == 0) { // This means that the file was found locally and we dont need to create a new
+                          // file for it
       // out of loop, print file contents
       System.out.println("File " + fileName + "\n" + fileContents);
-      
+
     } else if (fileFound != -1) { // This means the file was found but not on our local server
-      Path currentRelativePath = Paths.get("");
-      String newFileLoc = currentRelativePath.toAbsolutePath().toString() + "/../../FileSystemServer/Files/";
-      
-      // create file locally
-      File file = new File(newFileLoc + "/" +fileName);
-      
-      // use a FileWriter to fill the file with the fileContents
-      FileWriter myWriter;
-      BufferedWriter output = null;
-      try {
-//        myWriter = new FileWriter(file);
-//        myWriter.write(fileContents);
-//        myWriter.close();
-      
-        output = new BufferedWriter(new FileWriter(file));
-        output.write(fileContents);
-        
-      } catch (IOException e1) {
-        e1.printStackTrace();
-        System.out.println("Unable to write the File");
-      }
-      
-      
+        fileCreator(fileContents, fileName);
+
       arguments[6] = localServer;
-      
-      // create an orb using local server argument to update the server with the new local file
+
+      // create an orb using local server argument to update the server with the new
+      // local file
       try {
-        
+
         // create and initialize the ORB
         ORB orb = ORB.init(arguments, null);
 
@@ -152,32 +136,42 @@ public class ReadAction extends MenuAction {
         System.out.println("ERROR : " + e);
         e.printStackTrace(System.out);
       }
-      
-      // call method createLocalFile() to make sure the server adds the file to ListOfLocalFiles
+
+      // call method createLocalFile() to make sure the server adds the file to
+      // ListOfLocalFiles
       fileSystemImpl.createLocalFile(fileName);
-      
+
       // print the contents of the file to the user
       System.out.println("File " + fileName + "\n" + fileContents);
-      
-      
-      
+
     } else { // file not found on any Servers
-      System.out.println("Cound not locate file " + fileName + "on any server!");
+      System.out.println("Cound not locate file " + fileName + " on any server!");
     }
-    
+
     /*
      * Option for user to close read
      */
-    //fileSystemImpl.closeRead(fileName);
-    
-    
+    // fileSystemImpl.closeRead(fileName);
+
+  }
+
+  private void fileCreator(String fileContents, String fileName) {
+    try {
+      File newFile = new File("/home/jk7045/eclipse-workspace/Project4/project4swe/FileSystemServer/Files/" + fileName);
+      if(newFile.createNewFile()) {
+        System.out.println("Created: " + fileName + " locally");
+      } else {
+        System.out.println("Error: Could not create file");
+      }
+      Files.write(newFile.toPath(), fileContents.getBytes(), StandardOpenOption.APPEND);
+      System.out.println("Successfully wrote to the file.");
+    } catch (IOException e) {
+      System.out.println("An error occurred.");
+      e.printStackTrace();
+    }
   }
 }
-  
-      
-      
-      
-    
+
 //      try {
 //    
 //      // create and initialize the ORB
