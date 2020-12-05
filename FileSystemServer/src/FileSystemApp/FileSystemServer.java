@@ -125,7 +125,7 @@ class FileSystemImpl extends FileSystemPOA {
               FileSystem fileSystemImplDos = makeConnection(tokensDos[1]);
               fileSystemImplDos.unlockLocally(title);
               lineNumDos++;
-            }      
+            }
             scannerDos.close();
           } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
@@ -218,8 +218,8 @@ class FileSystemImpl extends FileSystemPOA {
 
   @Override
   public String stopReadLocally(String title) {
-        fileFinder(title).stopReading();
-        return "Success";
+    fileFinder(title).stopReading();
+    return "Success";
   }
 
   @Override
@@ -273,6 +273,7 @@ class FileSystemImpl extends FileSystemPOA {
 
   /**
    * Searches the list listOfLocalFiles for the requested file
+   * 
    * @param title The title of the file
    * @return the FileInstance of the file
    */
@@ -284,60 +285,60 @@ class FileSystemImpl extends FileSystemPOA {
     }
     return null;
   }
+}
+
+/**
+ * This is the class that runs on the server
+ * 
+ * @author merlin
+ *
+ */
+public class FileSystemServer {
 
   /**
-   * This is the class that runs on the server
-   * 
-   * @author merlin
-   *
+   * @param args ignored
    */
-  public class FileSystemServer {
+  public static void main(String args[]) {
+    try {
+      // create and initialize the ORB
+      ORB orb = ORB.init(args, null);
 
-    /**
-     * @param args ignored
-     */
-    public void main(String args[]) {
-      try {
-        // create and initialize the ORB
-        ORB orb = ORB.init(args, null);
+      // get reference to rootpoa & activate the POAManager
+      POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
+      rootpoa.the_POAManager().activate();
 
-        // get reference to rootpoa & activate the POAManager
-        POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
-        rootpoa.the_POAManager().activate();
+      // create servant and register it with the ORB
+      FileSystemImpl fileSystemImpl = new FileSystemImpl();
+      fileSystemImpl.setORB(orb);
 
-        // create servant and register it with the ORB
-        FileSystemImpl fileSystemImpl = new FileSystemImpl();
-        fileSystemImpl.setORB(orb);
+      // get object reference from the servant
+      org.omg.CORBA.Object ref = rootpoa.servant_to_reference(fileSystemImpl);
+      FileSystem href = FileSystemHelper.narrow(ref);
 
-        // get object reference from the servant
-        org.omg.CORBA.Object ref = rootpoa.servant_to_reference(fileSystemImpl);
-        FileSystem href = FileSystemHelper.narrow(ref);
+      // get the root naming context
+      // NameService invokes the name service
+      org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
+      // Use NamingContextExt which is part of the Interoperable
+      // Naming Service (INS) specification.
+      NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
 
-        // get the root naming context
-        // NameService invokes the name service
-        org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
-        // Use NamingContextExt which is part of the Interoperable
-        // Naming Service (INS) specification.
-        NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
+      // bind the Object Reference in Naming
+      String name = "FileSystem";
+      NameComponent path[] = ncRef.to_name(name);
+      ncRef.rebind(path, href);
 
-        // bind the Object Reference in Naming
-        String name = "FileSystem";
-        NameComponent path[] = ncRef.to_name(name);
-        ncRef.rebind(path, href);
+      System.out.println("FileSystemServer ready and waiting ...");
 
-        System.out.println("FileSystemServer ready and waiting ...");
-
-        // wait for invocations from clients
-        orb.run();
-      }
-
-      catch (Exception e) {
-        System.err.println("ERROR: " + e);
-        e.printStackTrace(System.out);
-      }
-
-      System.out.println("FileSystemServer Exiting ...");
-
+      // wait for invocations from clients
+      orb.run();
     }
+
+    catch (Exception e) {
+      System.err.println("ERROR: " + e);
+      e.printStackTrace(System.out);
+    }
+
+    System.out.println("FileSystemServer Exiting ...");
+
   }
 }
