@@ -65,9 +65,8 @@ public class FileInstance {
         sc.close();
         return sc.nextLine();
       } catch (FileNotFoundException e) {
-        e.printStackTrace();
+        return "Error while trying to find the file";
       }
-      return null;
     }
 
     public String getContents() {
@@ -81,9 +80,8 @@ public class FileInstance {
         sc.close();
         return line;
       } catch (FileNotFoundException e) {
-        e.printStackTrace();
+        return "Error while trying to find the file";
       }
-      return null;
     }
 
 }
