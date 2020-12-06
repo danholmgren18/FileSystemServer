@@ -13,7 +13,7 @@ typedef sequence<octet> byteSeq;
   string closeRead(in string title);
   string closeWrite(in string title);
 
-  boolean createLocalFile(in string title);
+  boolean createLocalFile(in string title, in short amntPplRead, in short verNo);
 
   string lockForWrite(in string title);
   string unlockLocally(in string title);

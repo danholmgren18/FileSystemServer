@@ -1,5 +1,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.Scanner;
 
 import org.omg.CORBA.ORB;
@@ -15,21 +18,15 @@ import FileSystemApp.FileSystemHelper;
  * @author merlin
  *
  */
-public class WriteAction extends MenuAction
-{
+public class WriteAction extends MenuAction {
   static FileSystem fileSystemImpl;
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	void execute()
-	{
-		Scanner keyboard = new Scanner(System.in);
-		System.out.println("Give me input for this action");
-		String input = keyboard.nextLine();
-		System.out.println("I can do something with this input: " + input);
-		
-		String[] arguments = { "java", "-Xmx10g", "-cp", ".:../../FileSystem/", "FileSystemApp.FileSystemClient",
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  void execute() {
+    String[] arguments = { "java", "-Xmx10g", "-cp", ".:../../FileSystem/", "FileSystemApp.FileSystemClient",
         "-ORBInitialHost", "lsaremotede", "-ORBInitialPort", "1056", "-port", "1057" };
 
     // loop to walk through all 3 servers (clipper, Germany, Spain)
@@ -97,9 +94,71 @@ public class WriteAction extends MenuAction
     } catch (FileNotFoundException e1) {
       System.out.println("Error! Servers.txt file is unreachable");
     }
-		
-		
-		keyboard.close();
-	}
+    if (fileFound == 0) { // This means that the file was found locally and we dont need to create a new
+      // file for it
+// out of loop, print file contents
+      System.out.println("File " + fileName + "\n" + fileContents);
 
+    } else if (fileFound != -1) { // This means the file was found but not on our local server
+      fileCreator(fileContents, fileName);
+
+      arguments[6] = localServer;
+
+// create an orb using local server argument to update the server with the new
+// local file
+      try {
+
+// create and initialize the ORB
+        ORB orb = ORB.init(arguments, null);
+
+// get the root naming context
+        org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
+// Use NamingContextExt instead of NamingContext. This is
+// part of the Interoperable naming Service.
+        NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
+
+// resolve the Object Reference in Naming
+        String name = "FileSystem";
+        fileSystemImpl = FileSystemHelper.narrow(ncRef.resolve_str(name));
+      } catch (Exception e) {
+        System.out.println("ERROR : " + e);
+        e.printStackTrace(System.out);
+      }
+
+      short peepRead = 2;
+      short verNo = 8;
+// call method createLocalFile() to make sure the server adds the file to
+// ListOfLocalFiles
+      fileSystemImpl.createLocalFile(fileName, peepRead, verNo);
+
+// print the contents of the file to the user
+      System.out.println("File " + fileName + "\n" + fileContents);
+
+    } else { // file not found on any Servers
+      System.out.println("Cound not locate file " + fileName + " on any server!");
+    }
+
+    /*
+     * Option for user to edit the txt
+     * and then closeWrite
+     */
+  fileSystemImpl.closeWrite(fileName);
+
+  }
+
+  private void fileCreator(String fileContents, String fileName) {
+    try {
+      File newFile = new File("/home/jk7045/eclipse-workspace/Project4/project4swe/FileSystemServer/Files/" + fileName);
+      if (newFile.createNewFile()) {
+        System.out.println("Created: " + fileName + " locally");
+      } else {
+        System.out.println("Error: Could not create file");
+      }
+      Files.write(newFile.toPath(), fileContents.getBytes(), StandardOpenOption.APPEND);
+      System.out.println("Successfully wrote to the file.");
+    } catch (IOException e) {
+      System.out.println("An error occurred.");
+      e.printStackTrace();
+    }
+  }
 }

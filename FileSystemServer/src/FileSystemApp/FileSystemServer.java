@@ -231,11 +231,11 @@ class FileSystemImpl extends FileSystemPOA {
   }
 
   @Override
-  public boolean createLocalFile(String title) {
+  public boolean createLocalFile(String title, short readers, short version) {
     Path currentRelativePath = Paths.get("");
     String s = currentRelativePath.toAbsolutePath().toString() + "/..";
 
-    listOfLocalFiles.add(new FileInstance(new File(s + "/Files/" + title)));
+    listOfLocalFiles.add(new FileInstance(new File(s + "/Files/" + title), readers, version));
     return true;
   }
 

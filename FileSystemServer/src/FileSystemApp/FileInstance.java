@@ -8,16 +8,25 @@ public class FileInstance {
 
     private String fileTitle;
     private File zehFile;
-    private int version = 0;
-    private int amntOfPeopleReading = 0;
+    private int version;
+    private int amntOfPeopleReading;
     
 
     private boolean isLocked = false;
     
     
+    public FileInstance(File file, int ver, int peopleReading) {
+      zehFile = file;
+      fileTitle = zehFile.getName();
+      this.version = ver;
+      this.amntOfPeopleReading = peopleReading;
+    }
+    
     public FileInstance(File file) {
       zehFile = file;
       fileTitle = zehFile.getName();
+      this.version = 0;
+      this.amntOfPeopleReading = 0;
     }
     public int getAmntOfPeopleReading() {
       return amntOfPeopleReading;
