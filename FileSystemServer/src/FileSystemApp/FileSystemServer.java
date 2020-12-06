@@ -91,7 +91,12 @@ class FileSystemImpl extends FileSystemPOA {
       e.printStackTrace();
     }
 
-    targetFileContents = "Version: " + fileFinder(title).getVersion() + "\n" + "AmountPeopleReading: "
+    /**
+     * Version#
+     * Reader#
+     * fileContents
+     */
+    targetFileContents = fileFinder(title).getVersion() + "\n" 
         + fileFinder(title).getAmntOfPeopleReading() + "\n" + targetFileContents;
     return targetFileContents;
   }
@@ -144,7 +149,12 @@ class FileSystemImpl extends FileSystemPOA {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    targetFileContents = "Version: " + fileFinder(title).getVersion() + "\n" + "AmountPeopleReading: "
+    /**
+     * Version#
+     * Reader#
+     * FileContents
+     */
+    targetFileContents = fileFinder(title).getVersion() + "\n" 
         + fileFinder(title).getAmntOfPeopleReading() + "\n" + targetFileContents;
     return targetFileContents;
   }

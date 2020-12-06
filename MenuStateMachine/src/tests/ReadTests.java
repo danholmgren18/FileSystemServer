@@ -45,10 +45,12 @@ class ReadTests {
       if (count == 0) {
         assertEquals("File Not Here", contents); //When looking in local server, it should not find it
       }else if (count == 1) {
-        assertEquals("File Not Here", contents); //When looking in German server, it should not find it
-      }else if (count == 2) {
         assertNotEquals("File Not Here", contents); //When looking in Spain, it should find it
+        break;
+      }else if (count == 2) {
+        fail(); //It should find it in Spain so it should never get here
       }
+      count ++;
     }
     //Once it has opened the file for read the server should have it show as one person reading 
     FileSystem Impl = makeConnection("lsaremotees");

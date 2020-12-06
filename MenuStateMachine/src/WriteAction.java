@@ -143,6 +143,7 @@ public class WriteAction extends MenuAction {
      * Option for user to edit the txt
      * and then closeWrite
      */
+  fileCreator(fileContents, fileName);
   fileSystemImpl.closeWrite(fileName);
 
   }
