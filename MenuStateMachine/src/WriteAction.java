@@ -78,7 +78,7 @@ public class WriteAction extends MenuAction {
           e.printStackTrace(System.out);
         }
 
-        fileContents = fileSystemImpl.openFileForRead(fileName);
+        fileContents = fileSystemImpl.openFileForWrite(fileName);
 
         // Step 3: see if file is local
 

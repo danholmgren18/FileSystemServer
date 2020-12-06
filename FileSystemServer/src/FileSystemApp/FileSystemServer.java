@@ -98,10 +98,12 @@ class FileSystemImpl extends FileSystemPOA {
 
   @Override
   public String openFileForWrite(String title) {
-    String targetFileContents = fileFinder(title).getContents();
-    if (targetFileContents == null) {
+    FileInstance targetFile = fileFinder(title);
+
+    if (targetFile == null) {
       return "File Not Here";
     }
+    String targetFileContents = targetFile.getContents();
 
     /**
      * Loops through servers in Servers.txt and calls lockForWrite on each in turn
