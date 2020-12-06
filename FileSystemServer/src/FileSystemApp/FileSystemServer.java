@@ -144,7 +144,8 @@ class FileSystemImpl extends FileSystemPOA {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-
+    targetFileContents = "Version: " + fileFinder(title).getVersion() + "\n" + "AmountPeopleReading: "
+        + fileFinder(title).getAmntOfPeopleReading() + "\n" + targetFileContents;
     return targetFileContents;
   }
 
@@ -288,6 +289,19 @@ class FileSystemImpl extends FileSystemPOA {
       }
     }
     return null;
+  }
+
+  /**
+   * a method for testing, retrieves the amntOfPeopleReading and version and isLocked according to this server
+   */
+  @Override
+  public String retreiveInfo(String title) {
+    FileInstance targetFile = fileFinder(title);
+    if (targetFile == null) {
+      return "File Not Here";
+    }
+    return fileFinder(title).getVersion() + " " + fileFinder(title).getAmntOfPeopleReading() + " " + fileFinder(title).isLocked();
+    
   }
 }
 

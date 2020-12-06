@@ -130,6 +130,7 @@ public class WriteAction extends MenuAction {
 // call method createLocalFile() to make sure the server adds the file to
 // ListOfLocalFiles
       fileSystemImpl.createLocalFile(fileName, peepRead, verNo);
+      fileSystemImpl.lockForWrite(fileName);
 
 // print the contents of the file to the user
       System.out.println("File " + fileName + "\n" + fileContents);

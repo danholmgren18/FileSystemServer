@@ -44,32 +44,32 @@ import FileSystemApp.FileSystemHelper;
  */
 public class MenuMachine
 {
-  static FileSystem fileSystemImpl;
+ // static FileSystem fileSystemImpl;
 	/**
 	 * @param args ignored
 	 */
 	public static void main(String[] args)
 	{
-	  String[] arguments = {"java", "-Xmx10g", "-cp", ".:../../FileSystem/", "FileSystemApp.FileSystemClient",
-	                       "-ORBInitialHost", "clipper", "-ORBInitialPort", "1056", "-port", "1057"};
-	  try
-    {
-      // create and initialize the ORB
-      ORB orb = ORB.init(arguments, null);
-
-      // get the root naming context
-      org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
-      // Use NamingContextExt instead of NamingContext. This is
-      // part of the Interoperable naming Service.
-      NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
-
-      // resolve the Object Reference in Naming
-      String name = "FileSystem";
-      fileSystemImpl = FileSystemHelper.narrow(ncRef.resolve_str(name));
-    } catch (Exception e) {
-      System.out.println("ERROR : " + e);
-      e.printStackTrace(System.out);
-    }
+//	  String[] arguments = {"java", "-Xmx10g", "-cp", ".:../../FileSystem/", "FileSystemApp.FileSystemClient",
+//	                       "-ORBInitialHost", "clipper", "-ORBInitialPort", "1056", "-port", "1057"};
+//	  try
+//    {
+//      // create and initialize the ORB
+//      ORB orb = ORB.init(arguments, null);
+//
+//      // get the root naming context
+//      org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
+//      // Use NamingContextExt instead of NamingContext. This is
+//      // part of the Interoperable naming Service.
+//      NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
+//
+//      // resolve the Object Reference in Naming
+//      String name = "FileSystem";
+//      fileSystemImpl = FileSystemHelper.narrow(ncRef.resolve_str(name));
+//    } catch (Exception e) {
+//      System.out.println("ERROR : " + e);
+//      e.printStackTrace(System.out);
+//    }
 		Scanner keyboard = new Scanner(System.in);
 		State currentState = new StartState();
 		while (currentState.getClass() != EndState.class)

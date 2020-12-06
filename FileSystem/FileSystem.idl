@@ -21,5 +21,6 @@ typedef sequence<octet> byteSeq;
   string startReadLocally(in string title);
   string stopReadLocally(in string title);
 
+  string retreiveInfo(in string title);
   };
 };
