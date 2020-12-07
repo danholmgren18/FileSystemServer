@@ -131,7 +131,7 @@ class FileSystemImpl extends FileSystemPOA {
           // have already locked
           int lineNumDos = 0;
           try {
-            Scanner scannerDos = new Scanner(new File("../Servers.txt"));
+            Scanner scannerDos = new Scanner(new File("../../Servers.txt"));
             while (scannerDos.hasNextLine() || lineNumDos <= lineNum) {
               String[] tokensDos = scannerDos.nextLine().split(" "); // Takes in the next line of the file and splits it
                                                                      // at tokens
@@ -172,7 +172,7 @@ class FileSystemImpl extends FileSystemPOA {
      * turn
      */
     try {
-      Scanner scanner = new Scanner(new File("../Servers.txt"));
+      Scanner scanner = new Scanner(new File("../../Servers.txt"));
       while (scanner.hasNextLine()) {
         String[] tokens = scanner.nextLine().split(" "); // Takes in the next line of the file and splits it at tokens
 
@@ -199,7 +199,7 @@ class FileSystemImpl extends FileSystemPOA {
      * turn
      */
     try {
-      Scanner scanner = new Scanner(new File("../Servers.txt"));
+      Scanner scanner = new Scanner(new File("../../Servers.txt"));
       while (scanner.hasNextLine()) {
         String[] tokens = scanner.nextLine().split(" "); // Takes in the next line of the file and splits it at tokens
 
