@@ -49,6 +49,7 @@ public class WriteAction extends MenuAction {
     try {
       System.out.println("I HAVE ENTERED THE TRY BLOCK");
       String filePath = Paths.get("").toAbsolutePath().toString();
+      System.out.println(filePath);
       String current = "MenuStateMachine";
       String destination = "Servers.txt";
       int startIndex = filePath.indexOf(current);
@@ -56,6 +57,7 @@ public class WriteAction extends MenuAction {
       StringBuilder builder = new StringBuilder(filePath);
       builder.delete(startIndex, stopIndex);
       builder.append(destination);
+      System.out.println(builder.toString());
       scanner = new Scanner(new File(builder.toString()));
       System.out.println("I HAVE SCANNED SERVERS.TXT");
 
@@ -192,19 +194,28 @@ public class WriteAction extends MenuAction {
     for(String n : tokens) {
       newContents = newContents + n + "\n";
     }
-    
+    newContents = newContents.substring(0, newContents.length() - 1);
     System.out.println("Start of new contents:\n" + newContents + "\nAHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
 
     //fileCreator(newContents, fileName);
     try {
-      FileWriter fw = new FileWriter(fileName, false);
+      String filePath = Paths.get("").toAbsolutePath().toString();
+      System.out.println(filePath);
+      String current = "MenuStateMachine";
+      String destination = "FileSystemServer/Files";
+      int startIndex = filePath.indexOf(current);
+      int stopIndex = startIndex + current.length();
+      StringBuilder builder = new StringBuilder(filePath);
+      builder.delete(startIndex, stopIndex);
+      builder.append(destination);
+      FileWriter fw = new FileWriter(builder.toString() + fileName, false);
       fw.write(newContents);
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
     writeScanner.close();
-    System.out.println(fileSystemImpl.closeWrite(fileName, newContents.substring(0, newContents.length() - 1)));
+    System.out.println(fileSystemImpl.closeWrite(fileName, newContents));
 
   }
 

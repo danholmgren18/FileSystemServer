@@ -54,7 +54,7 @@ public class ReadAction extends MenuAction {
     fileName = userScan.nextLine();
     try {
       String filePath = Paths.get("").toAbsolutePath().toString();
-      String current = "FileSystemServer";
+      String current = "MenuStateMachine";
       String destination = "Servers.txt";
       int startIndex = filePath.indexOf(current);
       int stopIndex = startIndex + current.length();

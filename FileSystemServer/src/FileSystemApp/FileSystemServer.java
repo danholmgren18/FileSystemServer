@@ -222,7 +222,7 @@ class FileSystemImpl extends FileSystemPOA {
       }
       scanner.close();
     } catch (FileNotFoundException e) {
-      return "Servers.txt not Found in close Write";
+      return Paths.get("").toAbsolutePath().toString();
     }
     return "Success";
   }
