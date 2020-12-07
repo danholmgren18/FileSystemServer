@@ -32,15 +32,15 @@ public class ReadAction extends MenuAction {
 
   /**
    * 
-   * First prompt the user to enter the name of the file they want
-   * to view
+   * First prompt the user to enter the name of the file they want to view
    */
   @Override
   void execute() {
     String[] arguments = { "java", "-Xmx10g", "-cp", ".:../../FileSystem/", "FileSystemApp.FileSystemClient",
         "-ORBInitialHost", "lsaremotede", "-ORBInitialPort", "1056", "-port", "1057" };
 
-    // variables used in loop to walk through all 3 servers (clipper, Germany, Spain)
+    // variables used in loop to walk through all 3 servers (clipper, Germany,
+    // Spain)
     Scanner scanner;
     int count = 0;
     String fileName, fileContents = null;
@@ -106,35 +106,34 @@ public class ReadAction extends MenuAction {
       System.out.println("Error! Servers.txt file is unreachable");
     }
 
-    //TODO:
-    // modify a copy of the file so it won't print out version # and # of readers to the uesr
+    
+    // modify a copy of the file so it won't print out version # and # of readers to
+    // the user
     String truncatedContents = ""; // holds file with version # and # of readers taken out
     short readerNum = -1; // intitalized to -1 so it's easy to tell if something goes wrong
     short versionNum = -1; // intitalized to -1 so it's easy to tell if something goes wrong
-    
-    String[] fileLines = new String[fileContents.length()]; // make an array to hold each line 
+
+    String[] fileLines = new String[fileContents.length()]; // make an array to hold each line
     fileLines = fileContents.split("\n");
     for (int i = 0; i < fileLines.length; i++) {
-      if(i == 0) { // if i = 0, you are on the version # line
-        versionNum =  (short) fileLines[i].charAt(0);
-      }
-      else if(i == 1) { // if i = 1, you are on the # of readers line
-        readerNum =  (short) fileLines[i].charAt(0);
+      if (i == 0) { // if i = 0, you are on the version # line
+        versionNum = (short) fileLines[i].charAt(0);
+      } else if (i == 1) { // if i = 1, you are on the # of readers line
+        readerNum = (short) fileLines[i].charAt(0);
 
-      }
-      else { // if not first two cases, you are on the regular contents of the file that the user can see
+      } else { // if not first two cases, you are on the regular contents of the file that the
+               // user can see
         truncatedContents = truncatedContents + fileLines[i];
       }
     }
-    
-    
+
     if (fileFound == 0) { // This means that the file was found locally and we dont need to create a new
                           // file for it
       // out of loop, print file contents
       System.out.println("File " + fileName + "\n" + truncatedContents);
 
     } else if (fileFound != -1) { // This means the file was found but not on our local server
-        fileCreator(truncatedContents, fileName);
+      fileCreator(truncatedContents, fileName);
 
       arguments[6] = localServer;
 
@@ -173,15 +172,22 @@ public class ReadAction extends MenuAction {
     /*
      * Option for user to close read
      */
-     fileSystemImpl.closeRead(fileName);
-     
+    System.out.println("Press any key when done reading");
+    Scanner temp = new Scanner(System.in);
+    temp.nextLine();
+
+    fileSystemImpl.closeRead(fileName);
 
   }
 
   private void fileCreator(String fileContents, String fileName) {
     try {
-      File newFile = new File("/home/jk7045/eclipse-workspace/Project4/project4swe/FileSystemServer/Files/" + fileName);
-      if(newFile.createNewFile()) {
+      String filePath = Paths.get("").toString();
+      filePath.replaceFirst("MenuState", "FileSystemServer");
+      filePath.replaceFirst("/src", "");
+      filePath.replaceFirst("ReadAction", "Files");
+      File newFile = new File(filePath + fileName);
+      if (newFile.createNewFile()) {
         System.out.println("Created: " + fileName + " locally");
       } else {
         System.out.println("Error: Could not create file");
@@ -194,4 +200,3 @@ public class ReadAction extends MenuAction {
     }
   }
 }
-

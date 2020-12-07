@@ -65,7 +65,9 @@ class FileSystemImpl extends FileSystemPOA {
   public String openFileForRead(String title) {
 
     FileInstance targetFile = fileFinder(title);
-
+    if(targetFile.isLocked()) {
+      return "File currently locked";
+    }
     if (targetFile == null) {
       return "File Not Here";
     }
@@ -104,7 +106,9 @@ class FileSystemImpl extends FileSystemPOA {
   @Override
   public String openFileForWrite(String title) {
     FileInstance targetFile = fileFinder(title);
-
+    if(targetFile.isLocked()) {
+      return "File currently locked";
+    }
     if (targetFile == null) {
       return "File Not Here";
     }
@@ -187,7 +191,7 @@ class FileSystemImpl extends FileSystemPOA {
   }
 
   @Override
-  public String closeWrite(String title) {
+  public String closeWrite(String title, String newContents) {
 
     /**
      * Loops through servers in Servers.txt and calls startReadLocally on each in
@@ -200,6 +204,9 @@ class FileSystemImpl extends FileSystemPOA {
 
         // update the arugments[] array with the correct server name
         FileSystem fileSystemImpl = makeConnection(tokens[1]);
+        if (!fileSystemImpl.updateLocalFile(title, newContents).equals("Success")){
+          return "Failed in " + tokens[0];
+        }
         if (fileSystemImpl.unlockLocally(title).equals("Failed")) {
           return "Failed in " + tokens[0];
         }
@@ -294,7 +301,7 @@ class FileSystemImpl extends FileSystemPOA {
    */
   public FileInstance fileFinder(String title) {
     for (FileInstance n : listOfLocalFiles) {
-      if ((n.getTitle().equals(title)) && !n.isLocked()) {
+      if (n.getTitle().equals(title)){
         return n;
       }
     }
@@ -312,6 +319,16 @@ class FileSystemImpl extends FileSystemPOA {
     }
     return fileFinder(title).getVersion() + " " + fileFinder(title).getAmntOfPeopleReading() + " " + fileFinder(title).isLocked();
     
+  }
+
+  @Override
+  public String updateLocalFile(String title, String newContents) {
+    FileInstance file = fileFinder(title);
+    if (file == null) {
+      return "File Not Here";
+    }
+    file.setContents(newContents);
+    return "Success";
   }
 }
 

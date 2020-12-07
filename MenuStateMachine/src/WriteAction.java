@@ -2,8 +2,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.StringTokenizer;
 
 import org.omg.CORBA.ORB;
 import org.omg.CosNaming.NamingContextExt;
@@ -20,6 +23,7 @@ import FileSystemApp.FileSystemHelper;
  */
 public class WriteAction extends MenuAction {
   static FileSystem fileSystemImpl;
+  private ArrayList<String> tokens = new ArrayList<String>();
 
   /**
    * {@inheritDoc}
@@ -94,6 +98,27 @@ public class WriteAction extends MenuAction {
     } catch (FileNotFoundException e1) {
       System.out.println("Error! Servers.txt file is unreachable");
     }
+
+    // modify a copy of the file so it won't print out version # and # of readers to
+    // the user
+    String truncatedContents = ""; // holds file with version # and # of readers taken out
+    short readerNum = -1; // intitalized to -1 so it's easy to tell if something goes wrong
+    short versionNum = -1; // intitalized to -1 so it's easy to tell if something goes wrong
+
+    String[] fileLines = new String[fileContents.length()]; // make an array to hold each line
+    fileLines = fileContents.split("\n");
+    for (int i = 0; i < fileLines.length; i++) {
+      if (i == 0) { // if i = 0, you are on the version # line
+        versionNum = (short) fileLines[i].charAt(0);
+      } else if (i == 1) { // if i = 1, you are on the # of readers line
+        readerNum = (short) fileLines[i].charAt(0);
+
+      } else { // if not first two cases, you are on the regular contents of the file that the
+               // user can see
+        truncatedContents = truncatedContents + fileLines[i];
+      }
+    } 
+    
     if (fileFound == 0) { // This means that the file was found locally and we dont need to create a new
       // file for it
 // out of loop, print file contents
@@ -125,32 +150,47 @@ public class WriteAction extends MenuAction {
         e.printStackTrace(System.out);
       }
 
-      short peepRead = 2;
-      short verNo = 8;
 // call method createLocalFile() to make sure the server adds the file to
 // ListOfLocalFiles
-      fileSystemImpl.createLocalFile(fileName, peepRead, verNo);
+      fileSystemImpl.createLocalFile(fileName, readerNum, versionNum);
       fileSystemImpl.lockForWrite(fileName);
 
 // print the contents of the file to the user
-      System.out.println("File " + fileName + "\n" + fileContents);
+      System.out.println("File " + fileName + "\n" + truncatedContents);
 
     } else { // file not found on any Servers
       System.out.println("Cound not locate file " + fileName + " on any server!");
     }
 
-    /*
-     * Option for user to edit the txt
-     * and then closeWrite
+    StringTokenizer st = new StringTokenizer(truncatedContents, " ");
+    while(st.hasMoreTokens()) {
+      tokens.add(st.nextToken());
+  }
+    /**
+     * Block of code to change a line and then update that file with new line
      */
-  fileCreator(fileContents, fileName);
-  fileSystemImpl.closeWrite(fileName);
+    System.out.println("Enter the line number you would like to change (0 is line one)");
+    Scanner writeScanner = new Scanner(System.in);
+    int userLineNum = writeScanner.nextInt();
+    System.out.println("Enter what the new line will be");
+    String newLine = writeScanner.nextLine();
+    tokens.add(userLineNum, newLine);
+    
+    String newContents = "";
+    tokens.forEach(n -> newContents.concat(n));
+
+    fileCreator(newContents, fileName);
+    writeScanner.close();
+    fileSystemImpl.closeWrite(fileName);
 
   }
 
   private void fileCreator(String fileContents, String fileName) {
     try {
-      File newFile = new File("/home/jk7045/eclipse-workspace/Project4/project4swe/FileSystemServer/Files/" + fileName);
+      String filePath = Paths.get("").toString();
+      filePath.replaceFirst("MenuState", "FileSystemServer");
+      filePath.replaceFirst("ReadAction", "Files");
+      File newFile = new File(filePath + fileName);
       if (newFile.createNewFile()) {
         System.out.println("Created: " + fileName + " locally");
       } else {
