@@ -189,9 +189,7 @@ public class ReadAction extends MenuAction {
       int stopIndex = startIndex + current.length();
       StringBuilder builder = new StringBuilder(filePath);
       builder.delete(startIndex, stopIndex);
-      //filePath.replace(current, destination);
       builder.append(destination);
-      System.out.println(builder);
       File newFile = new File(builder + "/" + fileName);
       if (newFile.createNewFile()) {
         System.out.println("Created: " + fileName + " locally");

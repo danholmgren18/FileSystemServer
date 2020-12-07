@@ -204,9 +204,9 @@ class FileSystemImpl extends FileSystemPOA {
 
         // update the arugments[] array with the correct server name
         FileSystem fileSystemImpl = makeConnection(tokens[1]);
-        if (!fileSystemImpl.updateLocalFile(title, newContents).equals("Success")){
-          return "Failed in " + tokens[0];
-        }
+//        if (!fileSystemImpl.updateLocalFile(title, newContents).equals("Success")){
+//          return "Failed in " + tokens[0];
+//        }
         if (fileSystemImpl.unlockLocally(title).equals("Failed")) {
           return "Failed in " + tokens[0];
         }

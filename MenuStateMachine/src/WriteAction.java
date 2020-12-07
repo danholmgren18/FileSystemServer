@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -180,9 +181,16 @@ public class WriteAction extends MenuAction {
     String newContents = "";
     tokens.forEach(n -> newContents.concat(n));
 
-    fileCreator(newContents, fileName);
+    //fileCreator(newContents, fileName);
+    try {
+      FileWriter fw = new FileWriter(fileName, false);
+      fw.write(newContents);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     writeScanner.close();
-    fileSystemImpl.closeWrite(fileName, newContents);
+    System.out.println(fileSystemImpl.closeWrite(fileName, newContents));
 
   }
 
@@ -195,9 +203,7 @@ public class WriteAction extends MenuAction {
       int stopIndex = startIndex + current.length();
       StringBuilder builder = new StringBuilder(filePath);
       builder.delete(startIndex, stopIndex);
-      //filePath.replace(current, destination);
       builder.append(destination);
-      System.out.println(builder);
       File newFile = new File(builder + "/" + fileName);
       if (newFile.createNewFile()) {
         System.out.println("Created: " + fileName + " locally");
