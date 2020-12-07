@@ -199,7 +199,15 @@ class FileSystemImpl extends FileSystemPOA {
      * turn
      */
     try {
-      Scanner scanner = new Scanner(new File("../../Servers.txt"));
+      String filePath = Paths.get("").toAbsolutePath().toString();
+      String current = "FileSystemServer";
+      String destination = "FileSystemServer/Files/";
+      int startIndex = filePath.indexOf(current);
+      int stopIndex = startIndex + current.length();
+      StringBuilder builder = new StringBuilder(filePath);
+      builder.delete(startIndex, stopIndex);
+      builder.append(destination);
+      Scanner scanner = new Scanner(new File(builder.toString()));
       while (scanner.hasNextLine()) {
         String[] tokens = scanner.nextLine().split(" "); // Takes in the next line of the file and splits it at tokens
 
@@ -214,7 +222,7 @@ class FileSystemImpl extends FileSystemPOA {
       }
       scanner.close();
     } catch (FileNotFoundException e) {
-      return "Servers.txt not Found";
+      return "Servers.txt not Found in close Write";
     }
     return "Success";
   }
