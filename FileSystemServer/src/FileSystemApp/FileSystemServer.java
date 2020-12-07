@@ -65,7 +65,7 @@ class FileSystemImpl extends FileSystemPOA {
   public String openFileForRead(String title) {
 
     FileInstance targetFile = fileFinder(title);
-    if(targetFile.isLocked()) {
+    if(targetFile != null && targetFile.isLocked()) {
       return "File currently locked";
     }
     if (targetFile == null) {
