@@ -204,7 +204,7 @@ public class WriteAction extends MenuAction {
       e.printStackTrace();
     }
     writeScanner.close();
-    System.out.println(fileSystemImpl.closeWrite(fileName, newContents.trim()));
+    System.out.println(fileSystemImpl.closeWrite(fileName, newContents.substring(0, newContents.length() - 1)));
 
   }
 

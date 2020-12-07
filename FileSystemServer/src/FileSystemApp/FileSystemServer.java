@@ -17,6 +17,14 @@ import org.omg.PortableServer.POAHelper;
 class FileSystemImpl extends FileSystemPOA {
   private ORB orb;
   private ArrayList<FileInstance> listOfLocalFiles = new ArrayList<FileInstance>();
+  String filePath = Paths.get("").toAbsolutePath().toString();
+  String current = "FileSystemServer";
+  String destination = "Servers.txt";
+  int startIndex = filePath.indexOf(current);
+  int stopIndex = startIndex + current.length();
+  StringBuilder builder = new StringBuilder(filePath);
+  String temp = builder.delete(startIndex, stopIndex).toString();
+  String moreTemp = temp + destination;
 
   public FileSystemImpl() {
     // Initialize listOfLocalFiles
@@ -77,7 +85,7 @@ class FileSystemImpl extends FileSystemPOA {
      * turn
      */
     try {
-      Scanner scanner = new Scanner(new File("../../Servers.txt"));
+      Scanner scanner = new Scanner(new File(moreTemp));
       System.out.println("RIGHTHERE!!!!!!");
       while (scanner.hasNextLine()) {
         String[] tokens = scanner.nextLine().split(" "); // Takes in the next line of the file and splits it at tokens
@@ -119,7 +127,7 @@ class FileSystemImpl extends FileSystemPOA {
      * Loops through servers in Servers.txt and calls lockForWrite on each in turn
      */
     try {
-      Scanner scanner = new Scanner(new File("../../Servers.txt"));
+      Scanner scanner = new Scanner(new File(moreTemp));
       int lineNum = 0;
       while (scanner.hasNextLine()) {
         String[] tokens = scanner.nextLine().split(" "); // Takes in the next line of the file and splits it at tokens
@@ -131,7 +139,7 @@ class FileSystemImpl extends FileSystemPOA {
           // have already locked
           int lineNumDos = 0;
           try {
-            Scanner scannerDos = new Scanner(new File("../../Servers.txt"));
+            Scanner scannerDos = new Scanner(new File(moreTemp));
             while (scannerDos.hasNextLine() || lineNumDos <= lineNum) {
               String[] tokensDos = scannerDos.nextLine().split(" "); // Takes in the next line of the file and splits it
                                                                      // at tokens
@@ -172,7 +180,7 @@ class FileSystemImpl extends FileSystemPOA {
      * turn
      */
     try {
-      Scanner scanner = new Scanner(new File("../../Servers.txt"));
+      Scanner scanner = new Scanner(new File(moreTemp));
       while (scanner.hasNextLine()) {
         String[] tokens = scanner.nextLine().split(" "); // Takes in the next line of the file and splits it at tokens
 
@@ -199,15 +207,7 @@ class FileSystemImpl extends FileSystemPOA {
      * turn
      */
     try {
-      String filePath = Paths.get("").toAbsolutePath().toString();
-      String current = "FileSystemServer";
-      String destination = "FileSystemServer/Files/";
-      int startIndex = filePath.indexOf(current);
-      int stopIndex = startIndex + current.length();
-      StringBuilder builder = new StringBuilder(filePath);
-      builder.delete(startIndex, stopIndex);
-      builder.append(destination);
-      Scanner scanner = new Scanner(new File(builder.toString()));
+      Scanner scanner = new Scanner(new File(moreTemp));
       while (scanner.hasNextLine()) {
         String[] tokens = scanner.nextLine().split(" "); // Takes in the next line of the file and splits it at tokens
 

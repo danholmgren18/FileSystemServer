@@ -53,7 +53,15 @@ public class ReadAction extends MenuAction {
     System.out.println("Enter the name of the file:");
     fileName = userScan.nextLine();
     try {
-      scanner = new Scanner(new File("../Servers.txt"));
+      String filePath = Paths.get("").toAbsolutePath().toString();
+      String current = "FileSystemServer";
+      String destination = "Servers.txt";
+      int startIndex = filePath.indexOf(current);
+      int stopIndex = startIndex + current.length();
+      StringBuilder builder = new StringBuilder(filePath);
+      builder.delete(startIndex, stopIndex);
+      builder.append(destination);
+      scanner = new Scanner(new File(builder.toString()));
 
       while (scanner.hasNextLine()) {
         // First find what server you are on then update the arugments[] array with the
