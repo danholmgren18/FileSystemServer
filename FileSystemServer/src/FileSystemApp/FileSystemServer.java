@@ -77,7 +77,8 @@ class FileSystemImpl extends FileSystemPOA {
      * turn
      */
     try {
-      Scanner scanner = new Scanner(new File("../Servers.txt"));
+      Scanner scanner = new Scanner(new File("../../Servers.txt"));
+      System.out.println("RIGHTHERE!!!!!!");
       while (scanner.hasNextLine()) {
         String[] tokens = scanner.nextLine().split(" "); // Takes in the next line of the file and splits it at tokens
 
@@ -118,7 +119,7 @@ class FileSystemImpl extends FileSystemPOA {
      * Loops through servers in Servers.txt and calls lockForWrite on each in turn
      */
     try {
-      Scanner scanner = new Scanner(new File("../Servers.txt"));
+      Scanner scanner = new Scanner(new File("../../Servers.txt"));
       int lineNum = 0;
       while (scanner.hasNextLine()) {
         String[] tokens = scanner.nextLine().split(" "); // Takes in the next line of the file and splits it at tokens
