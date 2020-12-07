@@ -123,7 +123,7 @@ public class ReadAction extends MenuAction {
 
       } else { // if not first two cases, you are on the regular contents of the file that the
                // user can see
-        truncatedContents = truncatedContents + fileLines[i];
+        truncatedContents = truncatedContents + fileLines[i] + "\n";
       }
     }
 
@@ -163,7 +163,7 @@ public class ReadAction extends MenuAction {
       fileSystemImpl.createLocalFile(fileName, readerNum, versionNum);
 
       // print the contents of the file to the user
-      System.out.println("File " + fileName + "\n" + fileContents);
+      System.out.println("File " + fileName + "\n" + truncatedContents);
 
     } else { // file not found on any Servers
       System.out.println("Cound not locate file " + fileName + " on any server!");
@@ -182,11 +182,17 @@ public class ReadAction extends MenuAction {
 
   private void fileCreator(String fileContents, String fileName) {
     try {
-      String filePath = Paths.get("").toString();
-      filePath.replaceFirst("MenuState", "FileSystemServer");
-      filePath.replaceFirst("/src", "");
-      filePath.replaceFirst("ReadAction", "Files");
-      File newFile = new File(filePath + fileName);
+      String filePath = Paths.get("").toAbsolutePath().toString();
+      String current = "MenuStateMachine";
+      String destination = "FileSystemServer/Files/";
+      int startIndex = filePath.indexOf(current);
+      int stopIndex = startIndex + current.length();
+      StringBuilder builder = new StringBuilder(filePath);
+      builder.delete(startIndex, stopIndex);
+      //filePath.replace(current, destination);
+      builder.append(destination);
+      System.out.println(builder);
+      File newFile = new File(builder + "/" + fileName);
       if (newFile.createNewFile()) {
         System.out.println("Created: " + fileName + " locally");
       } else {

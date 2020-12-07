@@ -83,7 +83,7 @@ class ReadTests {
     Impl.openFileForWrite("Taco.txt");
     
     assertEquals("File Not Here", Impl.openFileForRead("Taco.txt"));
-    Impl.closeWrite("Taco.txt");
+    Impl.closeWrite("Taco.txt", "Yah yeet");
     String fileInfoDos = Impl.retreiveInfo("Taco.txt");
     String[] fileInfoSplitDos = fileInfo.split(" ");
     int retrievedVersionDos = Integer.parseInt(fileInfoSplitDos[0]);

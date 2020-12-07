@@ -115,17 +115,17 @@ public class WriteAction extends MenuAction {
 
       } else { // if not first two cases, you are on the regular contents of the file that the
                // user can see
-        truncatedContents = truncatedContents + fileLines[i];
+        truncatedContents = truncatedContents + fileLines[i] + "\n";
       }
     } 
     
     if (fileFound == 0) { // This means that the file was found locally and we dont need to create a new
       // file for it
 // out of loop, print file contents
-      System.out.println("File " + fileName + "\n" + fileContents);
+      System.out.println("File " + fileName + "\n" + truncatedContents);
 
     } else if (fileFound != -1) { // This means the file was found but not on our local server
-      fileCreator(fileContents, fileName);
+      fileCreator(truncatedContents, fileName);
 
       arguments[6] = localServer;
 
@@ -173,7 +173,8 @@ public class WriteAction extends MenuAction {
     Scanner writeScanner = new Scanner(System.in);
     int userLineNum = writeScanner.nextInt();
     System.out.println("Enter what the new line will be");
-    String newLine = writeScanner.nextLine();
+    Scanner writeScannerTwo = new Scanner(System.in);
+    String newLine = writeScannerTwo.nextLine();
     tokens.add(userLineNum, newLine);
     
     String newContents = "";
@@ -181,16 +182,23 @@ public class WriteAction extends MenuAction {
 
     fileCreator(newContents, fileName);
     writeScanner.close();
-    fileSystemImpl.closeWrite(fileName);
+    fileSystemImpl.closeWrite(fileName, newContents);
 
   }
 
   private void fileCreator(String fileContents, String fileName) {
     try {
-      String filePath = Paths.get("").toString();
-      filePath.replaceFirst("MenuState", "FileSystemServer");
-      filePath.replaceFirst("ReadAction", "Files");
-      File newFile = new File(filePath + fileName);
+      String filePath = Paths.get("").toAbsolutePath().toString();
+      String current = "MenuStateMachine";
+      String destination = "FileSystemServer/Files/";
+      int startIndex = filePath.indexOf(current);
+      int stopIndex = startIndex + current.length();
+      StringBuilder builder = new StringBuilder(filePath);
+      builder.delete(startIndex, stopIndex);
+      //filePath.replace(current, destination);
+      builder.append(destination);
+      System.out.println(builder);
+      File newFile = new File(builder + "/" + fileName);
       if (newFile.createNewFile()) {
         System.out.println("Created: " + fileName + " locally");
       } else {

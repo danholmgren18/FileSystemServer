@@ -213,8 +213,7 @@ class FileSystemImpl extends FileSystemPOA {
       }
       scanner.close();
     } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      return "Servers.txt not Found";
     }
     return "Success";
   }
