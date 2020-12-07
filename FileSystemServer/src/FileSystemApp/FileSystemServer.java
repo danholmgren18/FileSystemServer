@@ -207,9 +207,9 @@ class FileSystemImpl extends FileSystemPOA {
 //        if (!fileSystemImpl.updateLocalFile(title, newContents).equals("Success")){
 //          return "Failed in " + tokens[0];
 //        }
-        if (fileSystemImpl.unlockLocally(title).equals("Failed")) {
-          return "Failed in " + tokens[0];
-        }
+//        if (fileSystemImpl.unlockLocally(title).equals("Failed")) {
+//          return "Failed in " + tokens[0];
+//        }
       }
       scanner.close();
     } catch (FileNotFoundException e) {

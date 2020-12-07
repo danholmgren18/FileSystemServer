@@ -163,7 +163,7 @@ public class WriteAction extends MenuAction {
       System.out.println("Cound not locate file " + fileName + " on any server!");
     }
 
-    StringTokenizer st = new StringTokenizer(truncatedContents, " ");
+    StringTokenizer st = new StringTokenizer(truncatedContents, "\n");
     while(st.hasMoreTokens()) {
       tokens.add(st.nextToken());
   }
@@ -176,10 +176,14 @@ public class WriteAction extends MenuAction {
     System.out.println("Enter what the new line will be");
     Scanner writeScannerTwo = new Scanner(System.in);
     String newLine = writeScannerTwo.nextLine();
-    tokens.add(userLineNum, newLine);
+    tokens.set(userLineNum, newLine);
     
     String newContents = "";
-    tokens.forEach(n -> newContents.concat(n));
+    for(String n : tokens) {
+      newContents = newContents + n + "\n";
+    }
+    
+    System.out.println("Start of new contents:\n" + newContents + "\nAHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
 
     //fileCreator(newContents, fileName);
     try {
